@@ -338,31 +338,50 @@ const Home = () => {
                     isHovering ? "scale-105" : "scale-100"
                   }`}
                 >
-                  {/* Coding animation overlay */}
-                  <div className="absolute inset-0 overflow-hidden rounded-2xl">
-                    {/* Floating code snippets */}
-                    <div className="absolute top-1/4 left-1/4 text-[#6366f1] font-mono text-xs opacity-20 animate-pulse">
-                      &lt;div className="app"&gt;
-                    </div>
-                    <div className="absolute top-1/3 right-1/3 text-[#a855f7] font-mono text-xs opacity-20 animate-pulse delay-300">
-                      console.log('Hello');
-                    </div>
-                    <div className="absolute bottom-1/3 left-1/3 text-[#6366f1] font-mono text-xs opacity-20 animate-pulse delay-700">
-                      return &lt;Component/&gt;;
-                    </div>
-                    <div className="absolute bottom-1/4 right-1/4 text-[#a855f7] font-mono text-xs opacity-20 animate-pulse delay-1000">
-                      {"{data.map(item)"}
-                    </div>
-                  </div>
+                  {/* Attractive Coding Animation */}
+                  <div className="absolute inset-0 rounded-2xl overflow-hidden flex items-center justify-center bg-transparent">
+                    {/* Floating code snippets with animations */}
+                    <div className="absolute inset-0 overflow-hidden rounded-2xl">
+                      <div className="absolute top-1/4 left-1/4 text-[#6366f1] font-mono text-xs opacity-70 animate-pulse">
+                        &lt;div className="app"&gt;
+                      </div>
+                      <div className="absolute top-1/3 right-1/3 text-[#a855f7] font-mono text-xs opacity-70 animate-pulse delay-300">
+                        console.log('Hello World');
+                      </div>
+                      <div className="absolute bottom-1/3 left-1/3 text-[#6366f1] font-mono text-xs opacity-70 animate-pulse delay-700">
+                        return &lt;Component/&gt;;
+                      </div>
+                      <div className="absolute bottom-1/4 right-1/4 text-[#a855f7] font-mono text-xs opacity-70 animate-pulse delay-1000">
+                        {"{data.map(item => ("}
+                      </div>
+                      <div className="absolute top-1/2 left-1/2 text-[#8b5cf6] font-mono text-xs opacity-70 animate-bounce">
+                        &lt;/div&gt;
+                      </div>
 
-                  {/* GIF Animation */}
-                  <div className="absolute inset-0 rounded-2xl overflow-hidden flex items-center justify-center bg-gray-900">
-                    <img
-                      src="/5.gif"
-                      alt="Coding Animation"
-                      className="w-full h-full object-contain"
-                      loading="lazy"
-                    />
+                      {/* Animated curly braces */}
+                      <div className="absolute top-1/5 right-1/4 text-[#ec4899] font-mono text-lg opacity-60 animate-pulse">
+                        {"{"}
+                      </div>
+                      <div className="absolute bottom-1/5 left-1/4 text-[#ec4899] font-mono text-lg opacity-60 animate-pulse delay-500">
+                        {"}"}
+                      </div>
+
+                      {/* Animated brackets */}
+                      <div className="absolute top-2/5 left-1/5 text-[#10b981] font-mono text-lg opacity-60 animate-bounce delay-300">
+                        {"["}
+                      </div>
+                      <div className="absolute bottom-2/5 right-1/5 text-[#10b981] font-mono text-lg opacity-60 animate-bounce delay-800">
+                        {"]"}
+                      </div>
+                    </div>
+
+                    {/* Central animated element */}
+                    <div className="relative w-32 h-32 md:w-40 md:h-40 flex items-center justify-center">
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#6366f1] to-[#a855f7] opacity-20 animate-ping"></div>
+                      <div className="absolute inset-4 rounded-full bg-gradient-to-r from-[#8b5cf6] to-[#ec4899] opacity-30 animate-pulse"></div>
+                      <div className="absolute inset-8 rounded-full bg-gradient-to-r from-[#10b981] to-[#06b6d4] opacity-40 animate-ping delay-1000"></div>
+                      <div className="text-4xl md:text-5xl text-white">⌨️</div>
+                    </div>
                   </div>
                 </div>
 

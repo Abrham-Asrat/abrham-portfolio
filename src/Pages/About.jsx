@@ -118,7 +118,8 @@ const AboutPage = () => {
 
     // Define the actual counts based on what's in Portofolio.jsx
     const actualProjectsCount = 10; // 10 sample projects defined in Portofolio.jsx
-    const actualCertificatesCount = 4; // 4 sample certificates defined in Portofolio.jsx
+    const actualCertificatesCount =
+      storedCertificates.length > 0 ? storedCertificates.length : 4; // Fallback to 4 if no certificates in localStorage
 
     const startDate = new Date("2023-11-06");
     const today = new Date();
@@ -240,9 +241,8 @@ const AboutPage = () => {
 
             <div className="flex flex-col lg:flex-row items-center lg:items-start gap-4 lg:gap-4 lg:px-0 w-full">
               <a
-                href="https://github.com/Abrham-Asrat"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="/Abrham_Asrat_CV.pdf"
+                download
                 className="w-full lg:w-auto"
               >
                 <button
@@ -250,7 +250,7 @@ const AboutPage = () => {
                   data-aos-duration="800"
                   className="w-full lg:w-auto sm:px-6 py-2 sm:py-3 rounded-lg bg-gradient-to-r from-[#6366f1] to-[#a855f7] text-white font-medium transition-all duration-300 hover:scale-105 flex items-center justify-center lg:justify-start gap-2 shadow-lg hover:shadow-xl animate-bounce-slow"
                 >
-                  <FileText className="w-4 h-4 sm:w-5 sm:h-5" /> GitHub Profile
+                  <FileText className="w-4 h-4 sm:w-5 sm:h-5" /> Download CV
                 </button>
               </a>
               <a href="#Portofolio" className="w-full lg:w-auto">

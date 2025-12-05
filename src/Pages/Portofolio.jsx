@@ -110,151 +110,72 @@ const techStacks = [
   { icon: "css.svg", language: "CSS" },
   { icon: "javascript.svg", language: "JavaScript" },
   { icon: "typescript.svg", language: "TypeScript" },
-  { icon: "reactjs.svg", language: "ReactJS" },
   { icon: "angular.svg", language: "Angular" },
-  { icon: "nodejs.svg", language: "Node JS" },
-  // Using SQL icon for MongoDB since mongodb.svg doesn't exist
-  { icon: "sql.svg", language: "MongoDB" },
+  { icon: "reactjs.svg", language: "React" },
+  { icon: "nodejs.svg", language: "Node.js" },
+  { icon: "microsoft-sql.svg", language: "Microsoft SQL" },
+  { icon: "mysql.svg", language: "MySQL" },
   { icon: "sql.svg", language: "SQL" },
-  // Using MUI icon for ASP.NET since aspnet.svg doesn't exist
-  { icon: "MUI.svg", language: "ASP.NET" },
-  { icon: "tailwind.svg", language: "Tailwind CSS" },
   { icon: "bootstrap.svg", language: "Bootstrap" },
-  { icon: "firebase.svg", language: "Firebase" },
-  { icon: "MUI.svg", language: "Material UI" },
+  { icon: "tailwind.svg", language: "Tailwind CSS" },
   { icon: "vercel.svg", language: "Vercel" },
-  // Additional Tech Stacks using available icons
-  { icon: "reactjs.svg", language: "Vue.js" },
-  { icon: "reactjs.svg", language: "Next.js" },
-  { icon: "sql.svg", language: "PostgreSQL" },
-  { icon: "MUI.svg", language: "Docker" },
-  { icon: "MUI.svg", language: "Kubernetes" },
-  { icon: "MUI.svg", language: "AWS" },
-  { icon: "MUI.svg", language: "Azure" },
-  { icon: "MUI.svg", language: "Git" },
-  { icon: "MUI.svg", language: "GitHub" },
+  { icon: "csharp.svg", language: "C#" },
+  { icon: "cpp.svg", language: "C++" },
+  { icon: "java.svg", language: "Java" },
+  { icon: "sass.svg", language: "Sass/SCSS" },
+  { icon: "aspnet.svg", language: "ASP.NET" },
+  { icon: "entity-framework.svg", language: "Entity Framework" },
+  { icon: "rest-api.svg", language: "REST API" },
+  { icon: "git.svg", language: "Git" },
+  { icon: "github.svg", language: "GitHub" },
 ];
 
 const sampleProjects = [
   {
     id: "1",
-    Img: "/photo22.png",
-    Title: "E-commerce Platform",
+    Img: "/tour.png",
+    Title: "Tour Guider",
     Description:
-      "Full-featured e-commerce platform built with MERN stack, including payment integration, user authentication, and admin dashboard.",
-    Link: "https://github.com/Abrham-Asrat/ecommerce-platform",
+      "This website, Visit Ethiopia, serves as an online travel guide and booking platform dedicated to exploring the diverse culture, ancient history, and natural wonders of Ethiopia, the 'land of origin.'It functions as a Travel Tour Company and Concierge, offering visitors curated travel experiences and detailed packages to various destinations across the country. A featured example is the comprehensive 10-day GondarTana package,which bundles five sub-packages for a cost of $990, providing details for interested travelers. Ultimately, the site aims to be a trusted resource, allowing users to browse available trips, view a gallery of sights, and book their personalized tour directly through the platform.",
+    Link: "https://visitethiopia12.netlify.app/",
     TechStack: ["React", "Node.js", "MongoDB", "Express"],
   },
   {
     id: "2",
-    Img: "/photo22.png",
-    Title: "Task Management System",
+    Img: "/doctor.png",
+    Title: "Health care website",
     Description:
-      "Collaborative task management application with real-time updates, drag-and-drop interface, and team collaboration features.",
-    Link: "https://github.com/Abrham-Asrat/task-manager",
-    TechStack: ["Angular", "Node.js", "PostgreSQL", "Socket.io"],
+      "The ELIT ENT Center website, serves as the official online presence for a specialized medical facility dedicated to comprehensive Ear, Nose, and Throat (ENT) care. Led by Dr. Abiy, the center focuses on providing expert diagnosis and personalized treatment for a wide range of conditions affecting the head and neck. This includes common issues like chronic sinusitis, tonsillitis, hearing loss, and sleep apnea, as well as more complex surgical needs. The site is likely designed to inform potential patients about the center’s philosophy, the full spectrum of services offered, clinic location, and procedures for scheduling appointments. It emphasizes professional, high-quality healthcare delivered by an experienced otolaryngologist, aiming to be a trusted resource for patients seeking specialized care for their ENT health concerns.",
+    Link: "https://elit-ent-center.vercel.app/",
+    TechStack: ["ASP.NET Core", "SQL Server", "Angular", "Entity Framework"],
   },
   {
     id: "3",
-    Img: "/photo22.png",
-    Title: "Social Media Dashboard",
+    Img: "/bank.png",
+    Title: "Bank Information Giver",
     Description:
-      "Analytics dashboard for social media management with data visualization, scheduling, and performance tracking.",
-    Link: "https://github.com/Abrham-Asrat/social-dashboard",
-    TechStack: ["React", "D3.js", "Firebase", "Express"],
+      "This website, Bank Information Giver, promotes a new, simplified, and entirely digital banking experience. It highlights core features, including a free debit card, tools to watch your money grow, and a 100% digital platform designed for a simpler life. The bank's operations focus on ease and speed, offering instant transfers, instant loans, and the ability to instantly close your account without complications. The site encourages visitors to open a free account today and features testimonials from satisfied customers who have embraced this modern, minimalist approach to finance.",
+    Link: "https://bank-information-giver.netlify.app/",
+    TechStack: ["React", "Firebase", "Express"],
   },
   {
     id: "4",
-    Img: "/photo22.png",
-    Title: "Health Tracking Application",
+    Img: "/food.png",
+    Title: "Food Recipe",
     Description:
-      "Mobile-responsive health tracking app with workout planning, nutrition logging, and progress visualization.",
-    Link: "https://github.com/Abrham-Asrat/health-tracker",
+      "The website is a recipe application, likely a personal project or a learning exercise, titled Food recipe. It features a search function that encourages users to begin by looking up a recipe or ingredient to find cooking instructions and have fun. The platform includes core functionality for users to save their favorite recipes by using a 'Bookmarks' feature, which currently shows a message to find a nice recipe and bookmark it. Additionally, the site allows users to contribute their own culinary creations by providing a form to upload a new recipe, which includes fields for the title, ingredients, image URL, publisher, prep time, and servings.",
+    Link: "https://myforkifyrecipes.netlify.app/",
     TechStack: ["React Native", "Node.js", "MongoDB", "Redux"],
-  },
-  {
-    id: "5",
-    Img: "/photo22.png",
-    Title: "Inventory Management System",
-    Description:
-      "Enterprise-level inventory management solution with barcode scanning, reporting, and multi-location support.",
-    Link: "https://github.com/Abrham-Asrat/inventory-system",
-    TechStack: ["ASP.NET Core", "SQL Server", "Angular", "Entity Framework"],
-  },
-  // New Projects
-  {
-    id: "6",
-    Img: "/photo22.png",
-    Title: "Real-time Chat Application",
-    Description:
-      "Secure real-time messaging platform with end-to-end encryption, file sharing, and group chat capabilities.",
-    Link: "https://github.com/Abrham-Asrat/chat-app",
-    TechStack: ["React", "Socket.io", "Node.js", "MongoDB"],
-  },
-  {
-    id: "7",
-    Img: "/photo22.png",
-    Title: "Weather Forecast Dashboard",
-    Description:
-      "Interactive weather dashboard with location-based forecasts, historical data visualization, and severe weather alerts.",
-    Link: "https://github.com/Abrham-Asrat/weather-dashboard",
-    TechStack: ["Vue.js", "D3.js", "OpenWeather API", "Firebase"],
-  },
-  {
-    id: "8",
-    Img: "/photo22.png",
-    Title: "Online Learning Platform",
-    Description:
-      "Comprehensive e-learning solution with course creation tools, video streaming, progress tracking, and certification.",
-    Link: "https://github.com/Abrham-Asrat/learning-platform",
-    TechStack: ["Next.js", "Tailwind CSS", "PostgreSQL", "Stripe API"],
-  },
-  {
-    id: "9",
-    Img: "/photo22.png",
-    Title: "Fitness Tracker Mobile App",
-    Description:
-      "Cross-platform mobile application for fitness enthusiasts with workout plans, calorie tracking, and progress analytics.",
-    Link: "https://github.com/Abrham-Asrat/fitness-tracker",
-    TechStack: ["React Native", "Redux", "Firebase", "HealthKit API"],
-  },
-  {
-    id: "10",
-    Img: "/photo22.png",
-    Title: "Restaurant Reservation System",
-    Description:
-      "Table reservation platform for restaurants with online booking, customer management, and automated confirmation system.",
-    Link: "https://github.com/Abrham-Asrat/reservation-system",
-    TechStack: ["Angular", "Node.js", "MongoDB", "Twilio API"],
   },
 ];
 
 const sampleCertificates = [
-  {
-    Img: "/Meta.png",
-    Title: "Full-Stack Web Development",
-    Issuer: "Coursera",
-    Date: "2023",
-  },
-  {
-    Img: "/Meta.png",
-    Title: "AWS Cloud Practitioner",
-    Issuer: "Amazon Web Services",
-    Date: "2024",
-  },
-  // New Certificates
-  {
-    Img: "/Meta.png",
-    Title: "Google Professional Cloud Developer",
-    Issuer: "Google Cloud",
-    Date: "2024",
-  },
-  {
-    Img: "/Meta.png",
-    Title: "Microsoft Azure Fundamentals",
-    Issuer: "Microsoft",
-    Date: "2023",
-  },
+  // {
+  //   Img: "/Meta.png",
+  //   Title: "Full-Stack Web Development",
+  //   Issuer: "Coursera",
+  //   Date: "2023",
+  // },
 ];
 
 export default function FullWidthTabs() {

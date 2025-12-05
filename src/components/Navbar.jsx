@@ -12,7 +12,7 @@ const Navbar = () => {
     { href: "#About", label: "About" },
     { href: "#Portofolio", label: "Portofolio" },
     { href: "#Contact", label: "Contact" },
-    { href: "/admin", label: "Admin" },
+
   ];
 
   useEffect(() => {
