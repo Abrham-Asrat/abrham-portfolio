@@ -38,7 +38,7 @@ const WelcomeScreen = ({ onLoadingComplete }) => {
       setTimeout(() => {
         onLoadingComplete?.();
       }, 800);
-    }, 3500);
+    }, 4500);
 
     // Rotate through welcome texts
     const textTimer = setInterval(() => {
