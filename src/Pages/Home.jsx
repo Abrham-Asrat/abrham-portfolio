@@ -318,6 +318,11 @@ const Home = () => {
                     icon={ExternalLink}
                   />
                   <CTAButton href="#Contact" text="Contact" icon={Mail} />
+                  <CTAButton
+                    href="/Abrham_Asrat_CV.pdf"
+                    text="Download CV"
+                    icon={ExternalLink}
+                  />
                 </div>
 
                 {/* Social Links */}

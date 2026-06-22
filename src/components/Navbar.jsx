@@ -12,7 +12,7 @@ const Navbar = () => {
     { href: "#About", label: "About" },
     { href: "#Portofolio", label: "Portofolio" },
     { href: "#Contact", label: "Contact" },
-
+    { href: "/Abrham_Asrat_CV.pdf", label: "Download CV", external: true },
   ];
 
   useEffect(() => {
@@ -114,29 +114,43 @@ const Navbar = () => {
           <div className="hidden md:block">
             <div className="ml-8 flex items-center space-x-8">
               {navItems.map((item) => (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  onClick={(e) => scrollToSection(e, item.href)}
-                  className="group relative px-1 py-2 text-sm font-medium"
-                >
-                  <span
-                    className={`relative z-10 transition-colors duration-300 ${
-                      activeSection === item.href.substring(1)
-                        ? "bg-gradient-to-r from-[#6366f1] to-[#a855f7] bg-clip-text text-transparent font-semibold"
-                        : "text-[#e2d3fd] group-hover:text-white"
-                    }`}
+                item.external ? (
+                  <a
+                    key={item.label}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group relative px-1 py-2 text-sm font-medium"
                   >
-                    {item.label}
-                  </span>
-                  <span
-                    className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-[#6366f1] to-[#a855f7] transform origin-left transition-transform duration-300 ${
-                      activeSection === item.href.substring(1)
-                        ? "scale-x-100"
-                        : "scale-x-0 group-hover:scale-x-100"
-                    }`}
-                  />
-                </a>
+                    <span className="relative z-10 transition-colors duration-300 text-[#e2d3fd] group-hover:text-white">
+                      {item.label}
+                    </span>
+                  </a>
+                ) : (
+                  <a
+                    key={item.label}
+                    href={item.href}
+                    onClick={(e) => scrollToSection(e, item.href)}
+                    className="group relative px-1 py-2 text-sm font-medium"
+                  >
+                    <span
+                      className={`relative z-10 transition-colors duration-300 ${
+                        activeSection === item.href.substring(1)
+                          ? "bg-gradient-to-r from-[#6366f1] to-[#a855f7] bg-clip-text text-transparent font-semibold"
+                          : "text-[#e2d3fd] group-hover:text-white"
+                      }`}
+                    >
+                      {item.label}
+                    </span>
+                    <span
+                      className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-[#6366f1] to-[#a855f7] transform origin-left transition-transform duration-300 ${
+                        activeSection === item.href.substring(1)
+                          ? "scale-x-100"
+                          : "scale-x-0 group-hover:scale-x-100"
+                      }`}
+                    />
+                  </a>
+                )
               ))}
             </div>
           </div>
@@ -171,7 +185,23 @@ const Navbar = () => {
         <div className="flex flex-col h-full">
           <div className="px-4 py-6 space-y-4 flex-1 ">
             {navItems.map((item, index) =>
-              item.href.startsWith("/") ? (
+              item.external ? (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block px-4 py-3 text-lg font-medium transition-all duration-300 ease text-[#e2d3fd] hover:text-white"
+                  style={{
+                    transitionDelay: `${index * 100}ms`,
+                    transform: isOpen ? "translateX(0)" : "translateX(50px)",
+                    opacity: isOpen ? 1 : 0,
+                  }}
+                  onClick={() => setIsOpen(false)}
+                >
+                  {item.label}
+                </a>
+              ) : item.href.startsWith("/") ? (
                 // React Router links (like /admin)
                 <Link
                   key={item.label}

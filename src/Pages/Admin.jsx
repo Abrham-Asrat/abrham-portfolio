@@ -66,7 +66,6 @@ const AdminPage = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
   const [activeTab, setActiveTab] = useState("messages");
-  const [cvData, setCvData] = useState(null);
   const [techStackForm, setTechStackForm] = useState({ name: "", icon: "" });
   const [isAddingTech, setIsAddingTech] = useState(false);
   const [isAddingProject, setIsAddingProject] = useState(false);
@@ -199,21 +198,7 @@ const AdminPage = () => {
       }
     };
 
-    const fetchCV = async () => {
-      if (!user) return;
-      try {
-        const cvCollection = collection(db, "cv");
-        const cvSnapshot = await getDocs(cvCollection);
-        if (!cvSnapshot.empty) {
-          setCvData({ id: cvSnapshot.docs[0].id, ...cvSnapshot.docs[0].data() });
-        }
-      } catch (error) {
-        console.error("Error fetching CV:", error);
-      }
-    };
-
     fetchTechStacks();
-    fetchCV();
   }, [user]);
 
   useEffect(() => {
@@ -494,29 +479,6 @@ const AdminPage = () => {
     }
   };
 
-  const handleCVSubmit = async (e) => {
-    e.preventDefault();
-    const file = e.target.files[0];
-    if (!file) return;
-
-    try {
-      setUploading(true);
-      const url = await uploadFile(file, "cv");
-
-      const cvCollection = collection(db, "cv");
-      // Add new CV record
-      await addDoc(cvCollection, { url, name: file.name, timestamp: new Date() });
-
-      setCvData({ url, name: file.name });
-      showMessage("success", "CV uploaded successfully!");
-    } catch (error) {
-      console.error("Error uploading CV:", error);
-      showMessage("error", "Failed to upload CV");
-    } finally {
-      setUploading(false);
-    }
-  };
-
   const handleTechSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -562,7 +524,7 @@ const AdminPage = () => {
           </h1>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center w-full md:w-auto">
             <nav className="flex gap-1 sm:gap-2 bg-[#0f0c29]/50 p-1 sm:p-2 rounded-lg border border-gray-700 flex-wrap sm:flex-nowrap">
-              {["messages", "comments", "projects", "certificates", "tech", "cv", "settings"].map((tab) => (
+              {["messages", "comments", "projects", "certificates", "tech", "settings"].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -904,42 +866,6 @@ const AdminPage = () => {
                     <button onClick={() => deleteTech(tech.id)} className="text-red-400 hover:text-red-300">×</button>
                   </div>
                 ))}
-              </div>
-            </div>
-          )}
-
-          {activeTab === "cv" && (
-            <div className="bg-[#0f0c29]/50 backdrop-blur-lg rounded-xl p-6 border border-gray-700">
-              <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
-                <Lock className="w-5 h-5 text-[#6366f1]" />
-                CV Management
-              </h3>
-              <div className="space-y-6">
-                {cvData ? (
-                  <div className="p-4 bg-white/5 border border-white/10 rounded-xl flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-gray-400">Current CV:</p>
-                      <p className="font-medium text-[#6366f1]">{cvData.name}</p>
-                    </div>
-                    <a href={cvData.url} target="_blank" rel="noreferrer" className="px-4 py-2 bg-indigo-500/20 text-indigo-300 rounded-lg border border-indigo-500/30">View PDF</a>
-                  </div>
-                ) : (
-                  <p className="text-gray-400 italic">No CV uploaded yet.</p>
-                )}
-
-                <div className="p-6 border border-dashed border-gray-700 rounded-2xl text-center">
-                  <p className="mb-4 text-sm text-gray-400 font-medium">Upload a new CV (PDF format)</p>
-                  <input
-                    type="file"
-                    accept="application/pdf"
-                    onChange={handleCVSubmit}
-                    className="hidden"
-                    id="cv-upload"
-                  />
-                  <label htmlFor="cv-upload" className="inline-block px-8 py-3 bg-gradient-to-r from-[#6366f1] to-[#a855f7] rounded-xl font-bold cursor-pointer hover:scale-105 transition-transform shadow-lg shadow-[#6366f1]/20">
-                    {uploading ? "Uploading..." : "Select & Upload PDF"}
-                  </label>
-                </div>
               </div>
             </div>
           )}
