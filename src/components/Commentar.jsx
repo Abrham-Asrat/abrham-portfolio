@@ -219,13 +219,19 @@ const Komentar = () => {
     const commentsRef = collection(db, "portfolio-comments");
     const q = query(commentsRef, orderBy("createdAt", "desc"));
 
-    return onSnapshot(q, (querySnapshot) => {
-      const commentsData = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setComments(commentsData);
-    });
+    return onSnapshot(
+      q,
+      (querySnapshot) => {
+        const commentsData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setComments(commentsData);
+      },
+      (error) => {
+        console.error("Error fetching comments:", error);
+      }
+    );
   }, []);
 
   const uploadImage = useCallback(async (imageFile) => {

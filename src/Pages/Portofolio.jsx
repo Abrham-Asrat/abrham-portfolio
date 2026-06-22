@@ -58,10 +58,9 @@ const ToggleButton = ({ onClick, isShowingMore }) => (
         className={`
           transition-transform 
           duration-300 
-          ${
-            isShowingMore
-              ? "group-hover:-translate-y-0.5"
-              : "group-hover:translate-y-0.5"
+          ${isShowingMore
+            ? "group-hover:-translate-y-0.5"
+            : "group-hover:translate-y-0.5"
           }
         `}
       >
@@ -105,7 +104,7 @@ function a11yProps(index) {
   };
 }
 
-const techStacks = [
+const initialTechStacks = [
   { icon: "html.svg", language: "HTML" },
   { icon: "css.svg", language: "CSS" },
   { icon: "javascript.svg", language: "JavaScript" },
@@ -183,6 +182,7 @@ export default function FullWidthTabs() {
   const [value, setValue] = useState(0);
   const [projects, setProjects] = useState([]);
   const [certificates, setCertificates] = useState([]);
+  const [techStacks, setTechStacks] = useState(initialTechStacks);
   const [showAllProjects, setShowAllProjects] = useState(false);
   const [showAllCertificates, setShowAllCertificates] = useState(false);
   const isMobile = window.innerWidth < 768;
@@ -197,13 +197,9 @@ export default function FullWidthTabs() {
 
   const fetchData = useCallback(async () => {
     try {
-      const projectCollection = collection(db, "projects");
-      const certificateCollection = collection(db, "certificates");
-
-      const [projectSnapshot, certificateSnapshot] = await Promise.all([
-        getDocs(projectCollection),
-        getDocs(certificateCollection),
-      ]);
+      const projectSnapshot = await getDocs(collection(db, "projects")).catch(() => ({ docs: [] }));
+      const certificateSnapshot = await getDocs(collection(db, "certificates")).catch(() => ({ docs: [] }));
+      const techStackSnapshot = await getDocs(collection(db, "techstacks")).catch(() => ({ docs: [] }));
 
       const projectData = projectSnapshot.docs.map((doc) => ({
         id: doc.id,
@@ -216,25 +212,22 @@ export default function FullWidthTabs() {
         ...doc.data(),
       }));
 
-      // Use sample data if no Firebase data is available
-      const finalProjects =
-        projectData.length > 0 ? projectData : sampleProjects;
-      const finalCertificates =
-        certificateData.length > 0 ? certificateData : sampleCertificates;
+      const techData = techStackSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
 
-      setProjects(finalProjects);
-      setCertificates(finalCertificates);
+      setProjects(projectData.length > 0 ? projectData : sampleProjects);
+      setCertificates(certificateData.length > 0 ? certificateData : sampleCertificates);
+      setTechStacks(techData.length > 0 ? techData.map(t => ({ icon: t.icon, language: t.name })) : initialTechStacks);
 
-      // Store in localStorage
-      localStorage.setItem("projects", JSON.stringify(finalProjects));
-      localStorage.setItem("certificates", JSON.stringify(finalCertificates));
+      if (projectData.length > 0) localStorage.setItem("projects", JSON.stringify(projectData));
+      if (certificateData.length > 0) localStorage.setItem("certificates", JSON.stringify(certificateData));
     } catch (error) {
-      console.error("Error fetching data:", error);
-      // Use sample data if Firebase fetch fails
+      console.error("Error in fetchData:", error);
       setProjects(sampleProjects);
       setCertificates(sampleCertificates);
-      localStorage.setItem("projects", JSON.stringify(sampleProjects));
-      localStorage.setItem("certificates", JSON.stringify(sampleCertificates));
+      setTechStacks(initialTechStacks);
     }
   }, []);
 
@@ -398,8 +391,8 @@ export default function FullWidthTabs() {
                     index % 3 === 0
                       ? "fade-up-right"
                       : index % 3 === 1
-                      ? "fade-up"
-                      : "fade-up-left"
+                        ? "fade-up"
+                        : "fade-up-left"
                   }
                   data-aos-duration="800"
                 >
@@ -434,8 +427,8 @@ export default function FullWidthTabs() {
                     index % 3 === 0
                       ? "fade-up-right"
                       : index % 3 === 1
-                      ? "fade-up"
-                      : "fade-up-left"
+                        ? "fade-up"
+                        : "fade-up-left"
                   }
                   data-aos-duration="800"
                 >
@@ -456,8 +449,8 @@ export default function FullWidthTabs() {
                     index % 3 === 0
                       ? "fade-up-right"
                       : index % 3 === 1
-                      ? "fade-up"
-                      : "fade-up-left"
+                        ? "fade-up"
+                        : "fade-up-left"
                   }
                   data-aos-duration="800"
                 >

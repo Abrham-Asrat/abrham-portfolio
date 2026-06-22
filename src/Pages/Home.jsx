@@ -62,11 +62,10 @@ const CTAButton = memo(({ href, text, icon: Icon }) => (
             {text}
           </span>
           <Icon
-            className={`w-4 h-4 text-gray-200 ${
-              text === "Contact"
-                ? "group-hover:translate-x-1"
-                : "group-hover:rotate-45"
-            } transform transition-all duration-300 z-10`}
+            className={`w-4 h-4 text-gray-200 ${text === "Contact"
+              ? "group-hover:translate-x-1"
+              : "group-hover:rotate-45"
+              } transform transition-all duration-300 z-10`}
           />
         </span>
       </div>
@@ -214,6 +213,26 @@ const Home = () => {
     }
   }, [charIndex, isTyping, wordIndex]);
 
+  const [techStack, setTechStack] = useState(TECH_STACK);
+
+  useEffect(() => {
+    const fetchTechStack = async () => {
+      try {
+        const { db, collection } = await import("../firebase");
+        const { getDocs } = await import("firebase/firestore");
+        const techCollection = collection(db, "techstacks");
+        const techSnapshot = await getDocs(techCollection);
+        if (!techSnapshot.empty) {
+          const fetchedTech = techSnapshot.docs.map(doc => doc.data().name).slice(0, 6);
+          setTechStack(fetchedTech);
+        }
+      } catch (error) {
+        // Silent fail
+      }
+    };
+    fetchTechStack();
+  }, []);
+
   useEffect(() => {
     const timeout = setTimeout(
       handleTyping,
@@ -228,19 +247,17 @@ const Home = () => {
     loop: true,
     autoplay: true,
     style: { width: "100%", height: "100%" },
-    className: `w-full h-full transition-all duration-500 ${
-      isHovering
-        ? "scale-[180%] sm:scale-[160%] md:scale-[150%] lg:scale-[145%] rotate-2"
-        : "scale-[175%] sm:scale-[155%] md:scale-[145%] lg:scale-[140%]"
-    }`,
+    className: `w-full h-full transition-all duration-500 ${isHovering
+      ? "scale-[180%] sm:scale-[160%] md:scale-[150%] lg:scale-[145%] rotate-2"
+      : "scale-[175%] sm:scale-[155%] md:scale-[145%] lg:scale-[140%]"
+      }`,
   };
 
   return (
     <div className="min-h-screen bg-[#030014] overflow-hidden" id="Home">
       <div
-        className={`relative z-10 transition-all duration-1000 ${
-          isLoaded ? "opacity-100" : "opacity-0"
-        }`}
+        className={`relative z-10 transition-all duration-1000 ${isLoaded ? "opacity-100" : "opacity-0"
+          }`}
       >
         <div className="container mx-auto px-[5%] sm:px-6 lg:px-[0%] min-h-screen">
           <div className="flex flex-col lg:flex-row items-center justify-center h-screen md:justify-between gap-0 sm:gap-12 lg:gap-20">
@@ -284,7 +301,7 @@ const Home = () => {
                   data-aos="fade-up"
                   data-aos-delay="1200"
                 >
-                  {TECH_STACK.map((tech, index) => (
+                  {techStack.map((tech, index) => (
                     <TechStack key={index} tech={tech} />
                   ))}
                 </div>
@@ -327,16 +344,14 @@ const Home = () => {
               <div className="relative w-full h-full flex items-center justify-center">
                 {/* Background gradient effects */}
                 <div
-                  className={`absolute inset-0 bg-gradient-to-r from-[#6366f1]/10 to-[#a855f7]/10 rounded-3xl blur-3xl transition-all duration-700 ease-in-out ${
-                    isHovering ? "opacity-50 scale-105" : "opacity-20 scale-100"
-                  }`}
+                  className={`absolute inset-0 bg-gradient-to-r from-[#6366f1]/10 to-[#a855f7]/10 rounded-3xl blur-3xl transition-all duration-700 ease-in-out ${isHovering ? "opacity-50 scale-105" : "opacity-20 scale-100"
+                    }`}
                 ></div>
 
                 {/* Main content container */}
                 <div
-                  className={`relative z-10 w-full h-full flex items-center justify-center transform transition-transform duration-500 ${
-                    isHovering ? "scale-105" : "scale-100"
-                  }`}
+                  className={`relative z-10 w-full h-full flex items-center justify-center transform transition-transform duration-500 ${isHovering ? "scale-105" : "scale-100"
+                    }`}
                 >
                   {/* Attractive Coding Animation */}
                   <div className="absolute inset-0 rounded-2xl overflow-hidden flex items-center justify-center bg-transparent">
@@ -387,14 +402,12 @@ const Home = () => {
 
                 {/* Pulse effect */}
                 <div
-                  className={`absolute inset-0 pointer-events-none transition-all duration-700 ${
-                    isHovering ? "opacity-50" : "opacity-20"
-                  }`}
+                  className={`absolute inset-0 pointer-events-none transition-all duration-700 ${isHovering ? "opacity-50" : "opacity-20"
+                    }`}
                 >
                   <div
-                    className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-gradient-to-br from-indigo-500/10 to-purple-500/10 blur-3xl animate-[pulse_6s_cubic-bezier(0.4,0,0.6,1)_infinite] transition-all duration-700 ${
-                      isHovering ? "scale-110" : "scale-100"
-                    }`}
+                    className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-gradient-to-br from-indigo-500/10 to-purple-500/10 blur-3xl animate-[pulse_6s_cubic-bezier(0.4,0,0.6,1)_infinite] transition-all duration-700 ${isHovering ? "scale-110" : "scale-100"
+                      }`}
                   ></div>
                 </div>
               </div>

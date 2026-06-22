@@ -1,4 +1,4 @@
-import React, { useEffect, memo, useMemo } from "react";
+import React, { useEffect, useState, memo, useMemo } from "react";
 import {
   FileText,
   Code,
@@ -110,48 +110,52 @@ const StatCard = memo(
 const AboutPage = () => {
   // Memoized calculations
   const { totalProjects, totalCertificates, YearExperience } = useMemo(() => {
-    // Try to get data from localStorage first
     const storedProjects = JSON.parse(localStorage.getItem("projects") || "[]");
-    const storedCertificates = JSON.parse(
-      localStorage.getItem("certificates") || "[]"
-    );
+    const storedCertificates = JSON.parse(localStorage.getItem("certificates") || "[]");
 
-    // Define the actual counts based on what's in Portofolio.jsx
-    const actualProjectsCount = 10; // 10 sample projects defined in Portofolio.jsx
-    const actualCertificatesCount =
-      storedCertificates.length > 0 ? storedCertificates.length : 4; // Fallback to 4 if no certificates in localStorage
+    const actualProjectsCount = storedProjects.length > 0 ? storedProjects.length : 10;
+    const actualCertificatesCount = storedCertificates.length > 0 ? storedCertificates.length : 0;
 
     const startDate = new Date("2023-11-06");
     const today = new Date();
     const experience =
       today.getFullYear() -
       startDate.getFullYear() -
-      (today <
-      new Date(today.getFullYear(), startDate.getMonth(), startDate.getDate())
-        ? 1
-        : 0);
+      (today < new Date(today.getFullYear(), startDate.getMonth(), startDate.getDate()) ? 1 : 0);
 
     return {
-      totalProjects:
-        storedProjects.length > 0 ? storedProjects.length : actualProjectsCount,
-      totalCertificates:
-        storedCertificates.length > 0
-          ? storedCertificates.length
-          : actualCertificatesCount,
+      totalProjects: actualProjectsCount,
+      totalCertificates: actualCertificatesCount,
       YearExperience: experience,
     };
   }, []);
 
-  // Optimized AOS initialization
+  const [cvUrl, setCvUrl] = useState("/Abrham_Asrat_CV.pdf");
+
   useEffect(() => {
+    const fetchCV = async () => {
+      try {
+        const { db, collection } = await import("../firebase");
+        const { getDocs, query, orderBy, limit } = await import("firebase/firestore");
+        const cvCollection = collection(db, "cv");
+        const q = query(cvCollection, orderBy("timestamp", "desc"), limit(1));
+        const cvSnapshot = await getDocs(q);
+        if (!cvSnapshot.empty) {
+          setCvUrl(cvSnapshot.docs[0].data().url);
+        }
+      } catch (error) {
+        // Silently fail and use default
+      }
+    };
+    fetchCV();
+
     const initAOS = () => {
       AOS.init({
-        once: true, // Only animate elements once
-        duration: 800, // Reduce animation duration
+        once: true,
+        duration: 800,
         easing: "ease-out-quart",
       });
     };
-
     initAOS();
 
     // Debounced resize handler
@@ -239,10 +243,11 @@ const AboutPage = () => {
               efficiently using Git/GitHub.
             </p>
 
-            <div className="flex flex-col lg:flex-row items-center lg:items-start gap-4 lg:gap-4 lg:px-0 w-full">
+            <div className="flex flex-col lg:flex-row items-center lg:items-start gap-4 lg:gap-4 lg:px-0 w-full font-sans">
               <a
-                href="/Abrham_Asrat_CV.pdf"
-                download
+                href={cvUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-full lg:w-auto"
               >
                 <button
