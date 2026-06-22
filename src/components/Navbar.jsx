@@ -12,7 +12,12 @@ const Navbar = () => {
     { href: "#About", label: "About" },
     { href: "#Portofolio", label: "Portofolio" },
     { href: "#Contact", label: "Contact" },
-    { href: "/Abrham_Asrat_CV.pdf", label: "Download CV", external: true },
+    {
+      href: "/Abrham_Asrat_CV.pdf",
+      label: "Download CV",
+      external: true,
+      variant: "button",
+    },
   ];
 
   useEffect(() => {
@@ -120,9 +125,12 @@ const Navbar = () => {
                     href={item.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group relative px-1 py-2 text-sm font-medium"
-                  >
-                    <span className="relative z-10 transition-colors duration-300 text-[#e2d3fd] group-hover:text-white">
+                    download={item.label === "Download CV"}
+                    className={`group relative inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition-all ${item.variant === "button"
+                      ? "bg-gradient-to-r from-[#6366f1] to-[#a855f7] text-white shadow-[0_10px_30px_rgba(99,102,241,0.25)] hover:shadow-[0_15px_40px_rgba(99,102,241,0.35)]"
+                      : "text-[#e2d3fd] group-hover:text-white"
+                    }`}>
+                    <span className="relative z-10 transition-colors duration-300">
                       {item.label}
                     </span>
                   </a>
@@ -191,7 +199,11 @@ const Navbar = () => {
                   href={item.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block px-4 py-3 text-lg font-medium transition-all duration-300 ease text-[#e2d3fd] hover:text-white"
+                  download={item.label === "Download CV"}
+                  className={`block px-4 py-3 text-lg font-medium transition-all duration-300 ease ${item.variant === "button"
+                    ? "rounded-full bg-gradient-to-r from-[#6366f1] to-[#a855f7] text-white shadow-[0_10px_30px_rgba(99,102,241,0.25)] hover:shadow-[0_15px_40px_rgba(99,102,241,0.35)]"
+                    : "text-[#e2d3fd] hover:text-white"
+                  }`}
                   style={{
                     transitionDelay: `${index * 100}ms`,
                     transform: isOpen ? "translateX(0)" : "translateX(50px)",

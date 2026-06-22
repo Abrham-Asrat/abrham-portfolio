@@ -306,11 +306,38 @@ const Home = () => {
                   ))}
                 </div>
 
+                {/* Resume Callout */}
+                <div
+                  className="mt-6 rounded-3xl border border-[#6366f1]/20 bg-[#11101f]/80 p-5 shadow-[0_20px_80px_rgba(99,102,241,0.12)] backdrop-blur-xl"
+                  data-aos="fade-up"
+                  data-aos-delay="1300"
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                      <p className="text-sm uppercase tracking-[0.25em] text-[#a855f7] font-semibold">
+                        Resume ready to download
+                      </p>
+                      <p className="mt-2 text-sm sm:text-base text-gray-300 max-w-xl leading-relaxed">
+                        Get the latest CV with summaries of my skills, projects, and experience.
+                      </p>
+                    </div>
+                    <a
+                      href="/Abrham_Asrat_CV.pdf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      download
+                      className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#6366f1] to-[#a855f7] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[#6366f1]/20 hover:shadow-[#6366f1]/35 transition-all duration-300"
+                    >
+                      Download CV
+                    </a>
+                  </div>
+                </div>
+
                 {/* CTA Buttons */}
                 <div
                   className="flex flex-wrap gap-2 sm:gap-3 w-full justify-start"
                   data-aos="fade-up"
-                  data-aos-delay="1400"
+                  data-aos-delay="1500"
                 >
                   <CTAButton
                     href="#Portofolio"
