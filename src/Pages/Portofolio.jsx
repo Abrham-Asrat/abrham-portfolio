@@ -41,9 +41,13 @@ const ToggleButton = ({ onClick, isShowingMore }) => (
       group
       relative
       overflow-hidden
+      hover:scale-110
+      active:scale-95
+      animate-fade-in
+      hover:animate-pulse-glow
     "
   >
-    <span className="relative z-10 flex items-center gap-2">
+    <span className="relative z-10 flex items-center gap-2 group-hover:animate-glow">
       {isShowingMore ? "See Less" : "See More"}
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -83,7 +87,7 @@ function CustomTabPanel({ children, value, index, ...other }) {
       {...other}
     >
       {value === index && (
-        <Box sx={{ p: { xs: 1, sm: 3 } }}>
+            <Box sx={{ p: { xs: 1, sm: 2, md: 3 } }}>
           <Typography component="div">{children}</Typography>
         </Box>
       )}
@@ -257,7 +261,7 @@ export default function FullWidthTabs() {
 
   return (
     <div
-      className="md:px-[10%] px-[5%] w-full sm:mt-0 mt-[3rem] bg-[#030014] overflow-hidden"
+      className="px-4 sm:px-6 md:px-8 lg:px-10 xl:px-[10%] w-full sm:mt-0 mt-12 bg-[#030014] overflow-hidden"
       id="Portofolio"
     >
       {/* Header section - unchanged */}
@@ -266,7 +270,7 @@ export default function FullWidthTabs() {
         data-aos="fade-up"
         data-aos-duration="1000"
       >
-        <h2 className="inline-block text-3xl md:text-5xl font-bold text-center mx-auto text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] to-[#a855f7]">
+        <h2 className="inline-block text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-center mx-auto text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] to-[#a855f7]">
           <span
             style={{
               color: "#6366f1",
@@ -320,16 +324,16 @@ export default function FullWidthTabs() {
             indicatorColor="secondary"
             variant="fullWidth"
             sx={{
-              minHeight: "70px",
+              minHeight: "60px",
               "& .MuiTab-root": {
-                fontSize: { xs: "0.9rem", md: "1rem" },
+                fontSize: { xs: "0.8rem", sm: "0.9rem", md: "1rem" },
                 fontWeight: "600",
                 color: "#94a3b8",
                 textTransform: "none",
                 transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-                padding: "20px 0",
+                padding: "16px 0",
                 zIndex: 1,
-                margin: "8px",
+                margin: "6px",
                 borderRadius: "12px",
                 "&:hover": {
                   color: "#ffffff",
@@ -382,7 +386,7 @@ export default function FullWidthTabs() {
         </AppBar>
 
         <CustomTabPanel value={value} index={0}>
-          <div className="container mx-auto flex justify-center items-center overflow-hidden">
+            <div className="container mx-auto flex justify-center items-center overflow-hidden px-2 sm:px-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-5">
               {displayedProjects.map((project, index) => (
                 <div
@@ -419,7 +423,7 @@ export default function FullWidthTabs() {
 
         <CustomTabPanel value={value} index={1}>
           <div className="container mx-auto flex justify-center items-center overflow-hidden">
-            <div className="grid grid-cols-1 md:grid-cols-3 md:gap-5 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
               {displayedCertificates.map((certificate, index) => (
                 <div
                   key={index}
@@ -440,8 +444,8 @@ export default function FullWidthTabs() {
         </CustomTabPanel>
 
         <CustomTabPanel value={value} index={2}>
-          <div className="container mx-auto flex justify-center items-center overflow-hidden pb-[5%]">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 lg:gap-8 gap-5">
+          <div className="container mx-auto flex justify-center items-center overflow-hidden px-2 sm:px-4 pb-4 sm:pb-8 md:pb-[5%]">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
               {techStacks.map((stack, index) => (
                 <div
                   key={index}

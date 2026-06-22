@@ -17,16 +17,16 @@ import "aos/dist/aos.css";
 
 // Memoized Components
 const Header = memo(() => (
-  <div className="text-center lg:mb-8 mb-2 px-[5%]">
+  <div className="text-center lg:mb-8 mb-4 px-4 sm:px-6 md:px-8">
     <h2
-      className="text-4xl md:text-5xl font-bold text-white"
+      className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white"
       data-aos="zoom-in-up"
       data-aos-duration="600"
     >
       About Me
     </h2>
     <p
-      className="mt-2 text-gray-400 max-w-2xl mx-auto text-base sm:text-lg"
+      className="mt-2 text-gray-400 max-w-2xl mx-auto text-xs sm:text-sm md:text-base lg:text-lg"
       data-aos="zoom-in-up"
       data-aos-duration="800"
     >
@@ -36,11 +36,11 @@ const Header = memo(() => (
 ));
 
 const ProfileImage = memo(() => (
-  <div className="flex justify-end items-center sm:p-12 sm:py-0 sm:pb-0 p-0 py-2 pb-2">
+  <div className="flex justify-start sm:justify-end items-center sm:p-6 md:p-8 lg:p-12 p-0 py-3 md:py-0">
     <div className="relative group" data-aos="fade-up" data-aos-duration="1000">
       {/* Rectangular profile image */}
       <div className="relative">
-        <div className="w-72 h-96 sm:w-80 sm:h-[30rem] rounded-xl overflow-hidden border-4 border-gray-700 transform transition-all duration-700 group-hover:scale-105 shadow-2xl">
+        <div className="w-48 h-64 sm:w-64 sm:h-80 md:w-72 md:h-96 lg:w-80 lg:h-[30rem] rounded-lg sm:rounded-xl border-2 sm:border-4 border-gray-700 transform transition-all duration-700 group-hover:scale-105 shadow-2xl">
           <img
             src="/123.png"
             alt="Profile"
@@ -50,9 +50,9 @@ const ProfileImage = memo(() => (
         </div>
 
         {/* Circular badge at the bottom inside */}
-        <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-20 h-20 rounded-full border-4 border-gray-700 bg-gradient-to-r from-[#6366f1] to-[#a855f7] flex items-center justify-center shadow-lg">
-          <div className="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center">
-            <span className="text-white font-bold text-xl">AA</span>
+        <div className="absolute -bottom-4 sm:-bottom-5 lg:-bottom-6 left-1/2 transform -translate-x-1/2 w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full border-2 sm:border-4 border-gray-700 bg-gradient-to-r from-[#6366f1] to-[#a855f7] flex items-center justify-center shadow-lg">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-gray-800 flex items-center justify-center">
+            <span className="text-white font-bold text-sm sm:text-base md:text-lg lg:text-xl">AA</span>
           </div>
         </div>
       </div>
@@ -67,13 +67,13 @@ const StatCard = memo(
       data-aos-duration={1300}
       className="relative group"
     >
-      <div className="relative z-10 bg-[#030014]/50 rounded-2xl p-6 border border-gray-700 overflow-hidden transition-all duration-300 hover:scale-[1.02] h-full flex flex-col justify-between">
-        <div className="flex items-center justify-between mb-4">
-          <div className="w-16 h-16 rounded-full flex items-center justify-center bg-[#030014]/50">
-            <Icon className="w-8 h-8 text-gray-300" />
+      <div className="relative z-10 bg-[#030014]/50 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 border border-gray-700 overflow-hidden transition-all duration-300 hover:scale-[1.02] h-full flex flex-col justify-between">
+        <div className="flex items-center justify-between gap-3 mb-3 sm:mb-4">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center bg-[#030014]/50">
+            <Icon className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-gray-300" />
           </div>
           <span
-            className="text-4xl font-bold text-white"
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white"
             data-aos="fade-up-left"
             data-aos-duration="1500"
             data-aos-anchor-placement="top-bottom"
@@ -84,7 +84,7 @@ const StatCard = memo(
 
         <div>
           <p
-            className="text-sm uppercase tracking-wider text-gray-400 mb-2"
+            className="text-xs sm:text-sm md:text-sm lg:text-base uppercase tracking-wider text-gray-400 mb-2"
             data-aos="fade-up"
             data-aos-duration="800"
             data-aos-anchor-placement="top-bottom"
@@ -205,13 +205,13 @@ const AboutPage = () => {
 
   return (
     <div
-      className="h-auto pb-[10%] text-white overflow-hidden px-[5%] sm:px-[5%] lg:px-[10%] mt-10 sm-mt-0"
+      className="h-auto pb-8 sm:pb-12 md:pb-16 lg:pb-[10%] text-white overflow-hidden px-4 sm:px-6 md:px-8 lg:px-[10%] mt-8 sm:mt-10 md:mt-12"
       id="About"
     >
       <Header />
 
       <div className="w-full mx-auto pt-8 sm:pt-12 relative">
-        <div className="flex flex-col-reverse lg:grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+        <div className="flex flex-col-reverse lg:grid lg:grid-cols-2 gap-6 sm:gap-10 md:gap-12 lg:gap-16 items-center">
           <div className="space-y-6 text-center lg:text-left">
             <h2
               className="text-3xl sm:text-4xl lg:text-5xl font-bold"
@@ -244,7 +244,7 @@ const AboutPage = () => {
             </p>
 
             <div className="flex flex-col lg:flex-row items-center lg:items-start gap-4 lg:gap-4 lg:px-0 w-full font-sans">
-              <a
+            <a
                 href={cvUrl}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -253,7 +253,7 @@ const AboutPage = () => {
                 <button
                   data-aos="fade-up"
                   data-aos-duration="800"
-                  className="w-full lg:w-auto sm:px-6 py-2 sm:py-3 rounded-lg bg-gradient-to-r from-[#6366f1] to-[#a855f7] text-white font-medium transition-all duration-300 hover:scale-105 flex items-center justify-center lg:justify-start gap-2 shadow-lg hover:shadow-xl animate-bounce-slow"
+                  className="w-full lg:w-auto px-4 sm:px-6 py-2 sm:py-3 rounded-lg bg-gradient-to-r from-[#6366f1] to-[#a855f7] text-white font-medium text-sm sm:text-base transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-[#6366f1]/50 active:scale-95 flex items-center justify-center lg:justify-start gap-2 shadow-lg hover:shadow-xl group animate-fade-in group-hover:animate-pulse-glow"
                 >
                   <FileText className="w-4 h-4 sm:w-5 sm:h-5" /> Download CV
                 </button>
@@ -262,7 +262,7 @@ const AboutPage = () => {
                 <button
                   data-aos="fade-up"
                   data-aos-duration="1000"
-                  className="w-full lg:w-auto sm:px-6 py-2 sm:py-3 rounded-lg border border-[#a855f7]/50 text-[#a855f7] font-medium transition-all duration-300 hover:scale-105 flex items-center justify-center lg:justify-start gap-2 hover:bg-[#a855f7]/10 animate-bounce-slow delay-200"
+                  className="w-full lg:w-auto px-4 sm:px-6 py-2 sm:py-3 rounded-lg border border-[#a855f7]/50 text-[#a855f7] font-medium text-sm sm:text-base transition-all duration-300 hover:scale-110 hover:bg-[#a855f7]/20 hover:shadow-lg hover:shadow-[#a855f7]/50 active:scale-95 flex items-center justify-center lg:justify-start gap-2 hover:border-[#a855f7] group animate-fade-in group-hover:animate-pulse-glow"
                 >
                   <Code className="w-4 h-4 sm:w-5 sm:h-5" /> View Projects
                 </button>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect x="8" y="8" width="48" height="48" rx="4" fill="#512bd4"/>
+  <path fill="white" d="M32 16c-8.8 0-16 7.2-16 16s7.2 16 16 16 16-7.2 16-16-7.2-16-16-16zm0 28c-6.6 0-12-5.4-12-12s5.4-12 12-12 12 5.4 12 12-5.4 12-12 12z"/>
+  <path fill="white" d="M28 28h8v8h-8z"/>
+  <text x="32" y="40" font-family="Arial, sans-serif" font-size="8" fill="white" text-anchor="middle" dominant-baseline="middle">EF</text>
+</svg>

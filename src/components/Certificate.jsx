@@ -26,7 +26,7 @@ const Certificate = ({ ImgSertif }) => {
     <Box component="div" sx={{ width: "100%" }}>
       {/* Thumbnail Container */}
       <Box
-        className=""
+        className="group animate-fade-in"
         sx={{
           position: "relative",
           overflow: "hidden",
@@ -34,8 +34,8 @@ const Certificate = ({ ImgSertif }) => {
           boxShadow: "0 8px 16px rgba(0,0,0,0.1)",
           transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
           "&:hover": {
-            transform: "translateY(-5px)",
-            boxShadow: "0 12px 24px rgba(0,0,0,0.2)",
+            transform: "scale(1.08) translateY(-8px)",
+            boxShadow: "0 12px 32px rgba(99, 102, 241, 0.3)",
             "& .overlay": {
               opacity: 1,
             },
@@ -44,7 +44,7 @@ const Certificate = ({ ImgSertif }) => {
               opacity: 1,
             },
             "& .certificate-image": {
-              filter: "contrast(1.05) brightness(1) saturate(1.1)",
+              filter: "contrast(1.05) brightness(1.1) saturate(1.1) drop-shadow(0 0 10px rgba(99, 102, 241, 0.3))",
             },
           },
         }}
@@ -66,7 +66,7 @@ const Certificate = ({ ImgSertif }) => {
           }}
         >
           <img
-            className="certificate-image"
+            className="certificate-image group-hover:animate-shimmer"
             src={ImgSertif}
             alt="Certificate"
             style={{

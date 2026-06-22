@@ -56,23 +56,23 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#030014] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#030014] flex items-center justify-center px-4 sm:px-6 py-6 sm:py-8">
       <div className="w-full max-w-md">
-        <div className="bg-[#0f0c29]/50 backdrop-blur-lg rounded-2xl p-8 border border-gray-700 shadow-2xl">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-[#6366f1] to-[#a855f7] bg-clip-text text-transparent mb-2">
+        <div className="bg-[#0f0c29]/50 backdrop-blur-lg rounded-lg sm:rounded-2xl p-6 sm:p-8 border border-gray-700 shadow-2xl">
+          <div className="text-center mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#6366f1] to-[#a855f7] bg-clip-text text-transparent mb-2">
               Admin Login
             </h1>
-            <p className="text-gray-400">Sign in to access the admin panel</p>
+            <p className="text-gray-400 text-sm sm:text-base">Sign in to access the admin panel</p>
           </div>
 
           {error && (
-            <div className="mb-6 p-3 bg-red-900/50 border border-red-500 rounded-lg text-red-200 text-sm">
+            <div className="mb-6 p-3 sm:p-4 bg-red-900/50 border border-red-500 rounded-lg text-red-200 text-xs sm:text-sm">
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Email Address
@@ -85,7 +85,7 @@ const LoginPage = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-3 py-3 bg-[#1a1a2e] border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6366f1] text-white placeholder-gray-500"
+                  className="w-full pl-10 pr-3 py-2.5 sm:py-3 bg-[#1a1a2e] border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6366f1] text-white placeholder-gray-500 text-sm sm:text-base"
                   placeholder="admin@example.com"
                   required
                 />
@@ -104,14 +104,14 @@ const LoginPage = () => {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-10 py-3 bg-[#1a1a2e] border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6366f1] text-white placeholder-gray-500"
+                  className="w-full pl-10 pr-10 py-2.5 sm:py-3 bg-[#1a1a2e] border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6366f1] text-white placeholder-gray-500 text-sm sm:text-base"
                   placeholder="••••••••"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
                 >
                   {showPassword ? (
                     <EyeOff className="h-5 w-5 text-gray-500" />

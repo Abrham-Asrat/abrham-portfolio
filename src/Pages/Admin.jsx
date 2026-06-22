@@ -553,20 +553,20 @@ const AdminPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#030014] text-white">
-      <div className="container mx-auto px-4 py-8">
+      <div className="w-full min-h-screen bg-[#030014] text-white">
+        <div className="w-full px-4 sm:px-6 md:px-8 lg:px-10 py-6 sm:py-8 md:py-10">
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-[#6366f1] to-[#a855f7] bg-clip-text text-transparent">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 sm:mb-8 gap-4 md:gap-0">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#6366f1] to-[#a855f7] bg-clip-text text-transparent">
             Admin Panel
           </h1>
-          <div className="flex flex-wrap gap-4 items-center">
-            <nav className="flex gap-2 bg-[#0f0c29]/50 p-1 rounded-lg border border-gray-700">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center w-full md:w-auto">
+            <nav className="flex gap-1 sm:gap-2 bg-[#0f0c29]/50 p-1 sm:p-2 rounded-lg border border-gray-700 flex-wrap sm:flex-nowrap">
               {["messages", "comments", "projects", "certificates", "tech", "cv", "settings"].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-4 py-2 rounded-md transition-all ${activeTab === tab
+                  className={`px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm transition-all whitespace-nowrap ${activeTab === tab
                     ? "bg-[#6366f1] text-white shadow-lg"
                     : "text-gray-400 hover:text-white"
                     } capitalize`}
@@ -577,7 +577,7 @@ const AdminPage = () => {
             </nav>
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors shadow-lg shadow-red-600/20"
+              className="flex items-center justify-center sm:justify-start gap-2 px-3 sm:px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors shadow-lg shadow-red-600/20 text-sm sm:text-base"
             >
               <LogOut className="w-4 h-4" />
               Logout
@@ -586,13 +586,13 @@ const AdminPage = () => {
         </div>
 
         {/* User Info & Global Msg */}
-        <div className="bg-[#0f0c29]/50 backdrop-blur-lg rounded-xl p-6 mb-8 border border-gray-700">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-r from-[#6366f1] to-[#a855f7] flex items-center justify-center">
-              <User className="w-6 h-6 text-white" />
+        <div className="bg-[#0f0c29]/50 backdrop-blur-lg rounded-lg sm:rounded-xl p-4 sm:p-6 mb-6 sm:mb-8 border border-gray-700">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-r from-[#6366f1] to-[#a855f7] flex items-center justify-center flex-shrink-0">
+              <User className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
-            <div>
-              <h2 className="text-xl font-semibold">Welcome, Admin</h2>
+            <div className="min-w-0">
+              <h2 className="text-lg sm:text-xl font-semibold">Welcome, Admin</h2>
               {user && <p className="text-gray-400 text-sm">{user.email}</p>}
             </div>
           </div>
@@ -600,7 +600,7 @@ const AdminPage = () => {
 
         {message.text && (
           <div
-            className={`mb-6 p-4 rounded-lg animate-fade-in ${message.type === "success"
+            className={`mb-6 p-3 sm:p-4 rounded-lg animate-fade-in text-sm sm:text-base ${message.type === "success"
               ? "bg-green-900/50 border border-green-500 text-green-200"
               : "bg-red-900/50 border border-red-500 text-red-200"
               }`}
@@ -625,7 +625,7 @@ const AdminPage = () => {
 
               {loadingMessages ? (
                 <div className="text-center py-8">
-                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#6366f1]"></div>
+                  <div className="inline-block animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-t-2 border-b-2 border-[#6366f1]"></div>
                   <p className="mt-2 text-gray-400">Loading messages...</p>
                 </div>
               ) : messages.length === 0 ? (

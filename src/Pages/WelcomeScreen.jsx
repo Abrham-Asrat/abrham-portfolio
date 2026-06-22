@@ -84,7 +84,7 @@ const WelcomeScreen = ({ onLoadingComplete }) => {
     <AnimatePresence>
       {isLoading && (
         <motion.div
-          className="fixed inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center overflow-hidden"
+          className="fixed inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center overflow-hidden px-4 py-6"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -95,7 +95,7 @@ const WelcomeScreen = ({ onLoadingComplete }) => {
           <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
             {/* Main Logo/Avatar */}
             <motion.div
-              className="mb-8 flex justify-center"
+              className="mb-6 sm:mb-8 flex justify-center"
               variants={itemVariants}
             >
               <div className="relative">

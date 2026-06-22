@@ -19,21 +19,21 @@ const CardProject = ({ Img, Title, Description, Link: ProjectLink, id }) => {
   };
 
   return (
-    <div className="group relative w-full">
-      <div className="relative overflow-hidden rounded-xl bg-[#030014]/50 border border-gray-700 transition-all duration-300 hover:border-gray-600">
+    <div className="group relative w-full hover:scale-105 transition-transform duration-300 animate-fade-in">
+      <div className="relative overflow-hidden rounded-xl bg-[#030014]/50 border border-gray-700 transition-all duration-300 hover:border-gray-600 hover:border-[#6366f1]/50 hover:shadow-lg hover:shadow-[#6366f1]/30 hover:scale-[1.02]">
         <div className="relative p-5 z-10">
-          <div className="relative overflow-hidden rounded-lg">
+          <div className="relative overflow-hidden rounded-lg group-hover:animate-pulse-glow">
             <img
               src={Img}
               alt={Title}
-              className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+              className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500 group-hover:brightness-110"
             />
           </div>
 
           <div className="mt-4 space-y-3">
-            <h3 className="text-xl font-semibold text-white">{Title}</h3>
+            <h3 className="text-xl font-semibold text-white group-hover:animate-glow transition-all duration-300">{Title}</h3>
 
-            <p className="text-gray-400 text-sm leading-relaxed line-clamp-2">
+            <p className="text-gray-400 text-sm leading-relaxed line-clamp-2 group-hover:text-gray-300 transition-colors">
               {Description}
             </p>
 
