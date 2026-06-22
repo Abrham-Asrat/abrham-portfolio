@@ -40,12 +40,10 @@ const AdminPage = () => {
   const [comments, setComments] = useState([]);
   const [projects, setProjects] = useState([]);
   const [certificates, setCertificates] = useState([]);
-  const [techStacks, setTechStacks] = useState([]);
   const [loadingMessages, setLoadingMessages] = useState(true);
   const [loadingComments, setLoadingComments] = useState(true);
   const [loadingProjects, setLoadingProjects] = useState(true);
   const [loadingCertificates, setLoadingCertificates] = useState(true);
-  const [loadingTechStacks, setLoadingTechStacks] = useState(true);
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
     newPassword: "",
@@ -66,8 +64,6 @@ const AdminPage = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
   const [activeTab, setActiveTab] = useState("messages");
-  const [techStackForm, setTechStackForm] = useState({ name: "", icon: "" });
-  const [isAddingTech, setIsAddingTech] = useState(false);
   const [isAddingProject, setIsAddingProject] = useState(false);
   const [projectForm, setProjectForm] = useState({
     Title: "",
@@ -177,28 +173,6 @@ const AdminPage = () => {
     };
 
     fetchCertificates();
-  }, [user]);
-
-  useEffect(() => {
-    const fetchTechStacks = async () => {
-      if (!user) return;
-      try {
-        setLoadingTechStacks(true);
-        const techCollection = collection(db, "techstacks");
-        const techSnapshot = await getDocs(techCollection);
-        const techList = techSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setTechStacks(techList);
-      } catch (error) {
-        console.error("Error fetching tech stacks:", error);
-      } finally {
-        setLoadingTechStacks(false);
-      }
-    };
-
-    fetchTechStacks();
   }, [user]);
 
   useEffect(() => {
@@ -479,33 +453,6 @@ const AdminPage = () => {
     }
   };
 
-  const handleTechSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      setUploading(true);
-      const docRef = await addDoc(collection(db, "techstacks"), techStackForm);
-      setTechStacks([...techStacks, { id: docRef.id, ...techStackForm }]);
-      setTechStackForm({ name: "", icon: "" });
-      setIsAddingTech(false);
-      showMessage("success", "Tech stack item added!");
-    } catch (error) {
-      console.error("Error adding tech stack:", error);
-      showMessage("error", "Failed to add tech stack");
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const deleteTech = async (id) => {
-    try {
-      await deleteDoc(doc(db, "techstacks", id));
-      setTechStacks(techStacks.filter((t) => t.id !== id));
-      showMessage("success", "Tech removed");
-    } catch (error) {
-      console.error("Error deleting tech:", error);
-    }
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-[#030014] flex items-center justify-center">
@@ -524,7 +471,7 @@ const AdminPage = () => {
           </h1>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center w-full md:w-auto">
             <nav className="flex gap-1 sm:gap-2 bg-[#0f0c29]/50 p-1 sm:p-2 rounded-lg border border-gray-700 flex-wrap sm:flex-nowrap">
-              {["messages", "comments", "projects", "certificates", "tech", "settings"].map((tab) => (
+              {["messages", "comments", "projects", "certificates", "settings"].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -537,13 +484,6 @@ const AdminPage = () => {
                 </button>
               ))}
             </nav>
-            <button
-              onClick={handleLogout}
-              className="flex items-center justify-center sm:justify-start gap-2 px-3 sm:px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors shadow-lg shadow-red-600/20 text-sm sm:text-base"
-            >
-              <LogOut className="w-4 h-4" />
-              Logout
-            </button>
           </div>
         </div>
 
@@ -832,47 +772,10 @@ const AdminPage = () => {
             </div>
           )}
 
-          {activeTab === "tech" && (
-            <div className="bg-[#0f0c29]/50 backdrop-blur-lg rounded-xl p-6 border border-gray-700">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-semibold flex items-center gap-2">
-                  <Lock className="w-5 h-5 text-[#6366f1]" />
-                  Tech Stack Management
-                </h3>
-              </div>
-              <form onSubmit={handleTechSubmit} className="flex gap-4 mb-6">
-                <input
-                  type="text"
-                  placeholder="Language/Tech Name"
-                  value={techStackForm.name}
-                  onChange={(e) => setTechStackForm({ ...techStackForm, name: e.target.value })}
-                  className="flex-1 px-4 py-2 bg-[#1a1a2e] border border-gray-700 rounded-lg outline-none"
-                  required
-                />
-                <input
-                  type="text"
-                  placeholder="Icon Name (e.g. SiReact)"
-                  value={techStackForm.icon}
-                  onChange={(e) => setTechStackForm({ ...techStackForm, icon: e.target.value })}
-                  className="flex-1 px-4 py-2 bg-[#1a1a2e] border border-gray-700 rounded-lg outline-none"
-                  required
-                />
-                <button type="submit" className="px-6 py-2 bg-[#6366f1] rounded-lg font-bold">Add</button>
-              </form>
-              <div className="flex flex-wrap gap-2">
-                {techStacks.map((tech) => (
-                  <div key={tech.id} className="flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full">
-                    <span>{tech.name}</span>
-                    <button onClick={() => deleteTech(tech.id)} className="text-red-400 hover:text-red-300">×</button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
 
           {activeTab === "settings" && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">
-              {/* Settings forms (Email/Password) */}
+              {/* Settings forms (Email/Password and Logout) */}
               <div className="bg-[#0f0c29]/50 backdrop-blur-lg rounded-xl p-6 border border-gray-700">
                 <div className="flex items-center gap-3 mb-6">
                   <Mail className="w-5 h-5 text-[#6366f1]" />
@@ -914,45 +817,55 @@ const AdminPage = () => {
                 )}
               </div>
 
-              <div className="bg-[#0f0c29]/50 backdrop-blur-lg rounded-xl p-6 border border-gray-700">
-                <div className="flex items-center gap-3 mb-6">
-                  <Lock className="w-5 h-5 text-[#a855f7]" />
-                  <h3 className="text-xl font-semibold">Update Password</h3>
+              <div className="bg-[#0f0c29]/50 backdrop-blur-lg rounded-xl p-6 border border-gray-700 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center gap-3 mb-6">
+                    <Lock className="w-5 h-5 text-[#a855f7]" />
+                    <h3 className="text-xl font-semibold">Update Password</h3>
+                  </div>
+                  {!showPasswordForm ? (
+                    <button onClick={() => setShowPasswordForm(true)} className="w-full py-2 bg-[#a855f7] hover:bg-[#9a4ae0] rounded-lg transition-colors font-medium">Change Password</button>
+                  ) : (
+                    <form onSubmit={handlePasswordUpdate} className="space-y-4">
+                      <input
+                        type={showCurrentPassword ? "text" : "password"}
+                        placeholder="Current Password"
+                        value={passwordData.currentPassword}
+                        onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+                        className="w-full px-4 py-2 bg-[#1a1a2e] border border-gray-700 rounded-lg focus:ring-2 focus:ring-[#a855f7] outline-none"
+                        required
+                      />
+                      <input
+                        type={showNewPassword ? "text" : "password"}
+                        placeholder="New Password"
+                        value={passwordData.newPassword}
+                        onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                        className="w-full px-4 py-2 bg-[#1a1a2e] border border-gray-700 rounded-lg focus:ring-2 focus:ring-[#a855f7] outline-none"
+                        required
+                      />
+                      <input
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder="Confirm New Password"
+                        value={passwordData.confirmPassword}
+                        onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+                        className="w-full px-4 py-2 bg-[#1a1a2e] border border-gray-700 rounded-lg focus:ring-2 focus:ring-[#a855f7] outline-none"
+                        required
+                      />
+                      <div className="flex gap-2">
+                        <button type="submit" className="flex-1 py-2 bg-[#a855f7] hover:bg-[#9a4ae0] rounded-lg font-bold transition-colors">Update</button>
+                        <button type="button" onClick={() => setShowPasswordForm(false)} className="px-4 py-2 bg-gray-700 rounded-lg font-medium">Cancel</button>
+                      </div>
+                    </form>
+                  )}
                 </div>
-                {!showPasswordForm ? (
-                  <button onClick={() => setShowPasswordForm(true)} className="w-full py-2 bg-[#a855f7] hover:bg-[#9a4ae0] rounded-lg transition-colors font-medium">Change Password</button>
-                ) : (
-                  <form onSubmit={handlePasswordUpdate} className="space-y-4">
-                    <input
-                      type={showCurrentPassword ? "text" : "password"}
-                      placeholder="Current Password"
-                      value={passwordData.currentPassword}
-                      onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-                      className="w-full px-4 py-2 bg-[#1a1a2e] border border-gray-700 rounded-lg focus:ring-2 focus:ring-[#a855f7] outline-none"
-                      required
-                    />
-                    <input
-                      type={showNewPassword ? "text" : "password"}
-                      placeholder="New Password"
-                      value={passwordData.newPassword}
-                      onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                      className="w-full px-4 py-2 bg-[#1a1a2e] border border-gray-700 rounded-lg focus:ring-2 focus:ring-[#a855f7] outline-none"
-                      required
-                    />
-                    <input
-                      type={showConfirmPassword ? "text" : "password"}
-                      placeholder="Confirm New Password"
-                      value={passwordData.confirmPassword}
-                      onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                      className="w-full px-4 py-2 bg-[#1a1a2e] border border-gray-700 rounded-lg focus:ring-2 focus:ring-[#a855f7] outline-none"
-                      required
-                    />
-                    <div className="flex gap-2">
-                      <button type="submit" className="flex-1 py-2 bg-[#a855f7] hover:bg-[#9a4ae0] rounded-lg font-bold transition-colors">Update</button>
-                      <button type="button" onClick={() => setShowPasswordForm(false)} className="px-4 py-2 bg-gray-700 rounded-lg font-medium">Cancel</button>
-                    </div>
-                  </form>
-                )}
+                <div className="mt-6">
+                  <button
+                    onClick={handleLogout}
+                    className="w-full py-3 bg-red-600 hover:bg-red-700 rounded-lg font-bold transition-colors"
+                  >
+                    Logout
+                  </button>
+                </div>
               </div>
             </div>
           )}
