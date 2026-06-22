@@ -15,7 +15,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyAxxKpDU_NaIqL351w2NK869oNE_SmZ4HI",
   authDomain: "myportfolio-ae939.firebaseapp.com",
   projectId: "myportfolio-ae939",
-  storageBucket: "myportfolio-ae939.firebasestorage.app",
+  storageBucket: "myportfolio-ae939.appspot.com",
   messagingSenderId: "699421095530",
   appId: "1:699421095530:web:727ff6fd6c9af18f1e7c13",
   measurementId: "G-JP5K647LNF",
