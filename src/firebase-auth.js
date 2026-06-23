@@ -5,6 +5,7 @@ import {
   signOut,
   updateEmail,
   updatePassword,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
@@ -38,4 +39,5 @@ export {
   signOut,
   updateEmail,
   updatePassword,
+  sendPasswordResetEmail,
 };

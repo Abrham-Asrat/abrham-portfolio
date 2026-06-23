@@ -1,36 +1,88 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  auth,
-  signOut,
-  updateEmail,
-  updatePassword,
-  db,
-} from "../firebase-auth";
+import { auth, signOut, updateEmail, updatePassword, db } from "../firebase-auth";
 import {
   EmailAuthProvider,
   reauthenticateWithCredential,
   onAuthStateChanged,
 } from "firebase/auth";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 import {
-  collection,
-  getDocs,
-  deleteDoc,
-  doc,
-  Timestamp,
-} from "firebase/firestore";
-import {
-  Eye,
-  EyeOff,
-  LogOut,
-  User,
-  Lock,
-  Mail,
-  MessageSquare,
-  Trash2,
+  Eye, EyeOff, LogOut, User, Lock, Mail,
+  MessageSquare, Trash2, Settings, Bell, Shield,
+  ChevronRight, Inbox,
 } from "lucide-react";
 
+/* ─── tiny helpers ─────────────────────────────────── */
+const GlassCard = ({ children, className = "", glow = "indigo" }) => {
+  const glowMap = {
+    indigo: "hover:shadow-[0_0_40px_-8px_rgba(99,102,241,0.5)]",
+    purple: "hover:shadow-[0_0_40px_-8px_rgba(168,85,247,0.5)]",
+    red:    "hover:shadow-[0_0_40px_-8px_rgba(239,68,68,0.4)]",
+  };
+  return (
+    <div
+      className={`
+        relative bg-white/[0.04] backdrop-blur-xl
+        border border-white/10 rounded-2xl
+        transition-all duration-300
+        ${glowMap[glow]}
+        ${className}
+      `}
+    >
+      {children}
+    </div>
+  );
+};
+
+const GlassInput = ({ icon: Icon, accentColor = "#6366f1", ...props }) => (
+  <div className="relative">
+    {Icon && (
+      <Icon
+        className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4"
+        style={{ color: accentColor }}
+      />
+    )}
+    <input
+      {...props}
+      className={`
+        w-full ${Icon ? "pl-10" : "pl-4"} pr-4 py-3
+        bg-white/[0.05] border border-white/10 rounded-xl
+        text-white placeholder-white/30 text-sm
+        focus:outline-none focus:border-white/30 focus:bg-white/[0.08]
+        transition-all duration-200
+      `}
+    />
+  </div>
+);
+
+const Badge = ({ count, color = "#6366f1" }) => (
+  <span
+    className="ml-2 px-2 py-0.5 rounded-full text-[11px] font-bold"
+    style={{ background: `${color}22`, color }}
+  >
+    {count}
+  </span>
+);
+
+const Spinner = ({ color = "#6366f1" }) => (
+  <div className="flex flex-col items-center justify-center py-16 gap-3">
+    <div
+      className="w-8 h-8 rounded-full border-2 border-t-transparent animate-spin"
+      style={{ borderColor: `${color} transparent transparent transparent` }}
+    />
+    <p className="text-white/40 text-sm">Loading…</p>
+  </div>
+);
+
+const EmptyState = ({ icon: Icon, text }) => (
+  <div className="flex flex-col items-center justify-center py-16 gap-3 text-white/30">
+    <Icon className="w-10 h-10" />
+    <p className="text-sm italic">{text}</p>
+  </div>
+);
+
+/* ─── main component ───────────────────────────────── */
 const AdminPage = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -38,520 +90,303 @@ const AdminPage = () => {
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [messages, setMessages] = useState([]);
   const [comments, setComments] = useState([]);
-  const [projects, setProjects] = useState([]);
-  const [certificates, setCertificates] = useState([]);
   const [loadingMessages, setLoadingMessages] = useState(true);
   const [loadingComments, setLoadingComments] = useState(true);
-  const [loadingProjects, setLoadingProjects] = useState(true);
-  const [loadingCertificates, setLoadingCertificates] = useState(true);
-  const [passwordData, setPasswordData] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
-  const [emailDataWithPassword, setEmailDataWithPassword] = useState({
-    newEmail: "",
-    confirmEmail: "",
-    currentPassword: "",
-  });
-  const [certForm, setCertForm] = useState({
-    Title: "",
-    Img: "",
-  });
-  const [isAddingCert, setIsAddingCert] = useState(false);
+  const [passwordData, setPasswordData] = useState({ currentPassword: "", newPassword: "", confirmPassword: "" });
+  const [emailDataWithPassword, setEmailDataWithPassword] = useState({ newEmail: "", confirmEmail: "", currentPassword: "" });
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [message, setMessage] = useState({ type: "", text: "" });
+  const [toast, setToast] = useState({ type: "", text: "" });
   const [activeTab, setActiveTab] = useState("messages");
-  const [isAddingProject, setIsAddingProject] = useState(false);
-  const [projectForm, setProjectForm] = useState({
-    Title: "",
-    Description: "",
-    Link: "",
-    Img: "",
-    TechStack: "",
-  });
-  const [uploading, setUploading] = useState(false);
   const navigate = useNavigate();
 
+  /* auth */
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-      } else {
-        navigate("/login");
-      }
+    const unsub = onAuthStateChanged(auth, (u) => {
+      u ? setUser(u) : navigate("/login");
       setLoading(false);
     });
-
-    return () => unsubscribe();
+    return unsub;
   }, [navigate]);
 
+  /* fetch messages */
   useEffect(() => {
-    const fetchMessages = async () => {
-      if (!user) return;
+    if (!user) return;
+    setLoadingMessages(true);
+    getDocs(collection(db, "messages"))
+      .then((snap) => {
+        const list = snap.docs
+          .map((d) => ({ id: d.id, ...d.data() }))
+          .sort((a, b) => toDate(b.timestamp) - toDate(a.timestamp));
+        setMessages(list);
+      })
+      .catch(() => showToast("error", "Failed to load messages"))
+      .finally(() => setLoadingMessages(false));
+  }, [user]);
 
-      try {
-        setLoadingMessages(true);
-        const messagesCollection = collection(db, "messages");
-        const messagesSnapshot = await getDocs(messagesCollection);
-        const messagesList = messagesSnapshot.docs
-          .map((doc) => {
-            const data = doc.data();
-            return {
-              id: doc.id,
-              ...data,
-            };
+  /* fetch comments */
+  useEffect(() => {
+    if (!user) return;
+    setLoadingComments(true);
+    getDocs(collection(db, "portfolio-comments"))
+      .then((snap) => {
+        const list = snap.docs
+          .map((d) => {
+            const data = d.data();
+            return { id: d.id, ...data, timestamp: data.timestamp || data.createdAt };
           })
-          .sort((a, b) => {
-            // Handle Firebase Timestamp objects
-            const timeA = a.timestamp
-              ? a.timestamp.toDate
-                ? a.timestamp.toDate()
-                : new Date(a.timestamp)
-              : new Date(0);
-            const timeB = b.timestamp
-              ? b.timestamp.toDate
-                ? b.timestamp.toDate()
-                : new Date(b.timestamp)
-              : new Date(0);
-            return timeB - timeA;
-          });
-
-        setMessages(messagesList);
-      } catch (error) {
-        console.error("Error fetching messages:", error);
-        showMessage("error", "Failed to load messages");
-      } finally {
-        setLoadingMessages(false);
-      }
-    };
-
-    fetchMessages();
+          .sort((a, b) => toDate(b.timestamp) - toDate(a.timestamp));
+        setComments(list);
+      })
+      .catch(() => showToast("error", "Failed to load comments"))
+      .finally(() => setLoadingComments(false));
   }, [user]);
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      if (!user) return;
-      try {
-        setLoadingProjects(true);
-        const projectsCollection = collection(db, "projects");
-        const projectsSnapshot = await getDocs(projectsCollection);
-        const projectsList = projectsSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setProjects(projectsList);
-      } catch (error) {
-        console.error("Error fetching projects:", error);
-      } finally {
-        setLoadingProjects(false);
-      }
-    };
-
-    fetchProjects();
-  }, [user]);
-
-  useEffect(() => {
-    const fetchCertificates = async () => {
-      if (!user) return;
-      try {
-        setLoadingCertificates(true);
-        const certificatesCollection = collection(db, "certificates");
-        const certificatesSnapshot = await getDocs(certificatesCollection);
-        const certificatesList = certificatesSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setCertificates(certificatesList);
-      } catch (error) {
-        console.error("Error fetching certificates:", error);
-      } finally {
-        setLoadingCertificates(false);
-      }
-    };
-
-    fetchCertificates();
-  }, [user]);
-
-  useEffect(() => {
-    const fetchComments = async () => {
-      if (!user) return;
-
-      try {
-        setLoadingComments(true);
-        const commentsCollection = collection(db, "portfolio-comments");
-        const commentsSnapshot = await getDocs(commentsCollection);
-        const commentsList = commentsSnapshot.docs
-          .map((doc) => {
-            const data = doc.data();
-            // Handle both timestamp and createdAt fields
-            const timestamp = data.timestamp || data.createdAt;
-            return {
-              id: doc.id,
-              ...data,
-              timestamp: timestamp,
-            };
-          })
-          .sort((a, b) => {
-            // Handle Firebase Timestamp objects
-            const timeA = a.timestamp
-              ? a.timestamp.toDate
-                ? a.timestamp.toDate()
-                : new Date(a.timestamp)
-              : new Date(0);
-            const timeB = b.timestamp
-              ? b.timestamp.toDate
-                ? b.timestamp.toDate()
-                : new Date(b.timestamp)
-              : new Date(0);
-            return timeB - timeA;
-          });
-
-        setComments(commentsList);
-      } catch (error) {
-        console.error("Error fetching comments:", error);
-        showMessage("error", "Failed to load comments");
-      } finally {
-        setLoadingComments(false);
-      }
-    };
-
-    fetchComments();
-  }, [user]);
-
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      navigate("/login");
-    } catch (error) {
-      showMessage("error", "Failed to logout. Please try again.");
-    }
+  const toDate = (t) => {
+    if (!t) return new Date(0);
+    return t.toDate ? t.toDate() : new Date(t);
   };
 
-  const showMessage = (type, text) => {
-    setMessage({ type, text });
-    setTimeout(() => setMessage({ type: "", text: "" }), 5000);
+  const showToast = (type, text) => {
+    setToast({ type, text });
+    setTimeout(() => setToast({ type: "", text: "" }), 4000);
   };
 
   const deleteMessage = async (id) => {
     try {
       await deleteDoc(doc(db, "messages", id));
-      setMessages(messages.filter((message) => message.id !== id));
-      showMessage("success", "Message deleted successfully");
-    } catch (error) {
-      console.error("Error deleting message:", error);
-      showMessage("error", "Failed to delete message");
-    }
+      setMessages((p) => p.filter((m) => m.id !== id));
+      showToast("success", "Message deleted");
+    } catch { showToast("error", "Failed to delete message"); }
   };
 
   const deleteComment = async (id) => {
     try {
       await deleteDoc(doc(db, "portfolio-comments", id));
-      setComments(comments.filter((comment) => comment.id !== id));
-      showMessage("success", "Comment deleted successfully");
-    } catch (error) {
-      console.error("Error deleting comment:", error);
-      showMessage("error", "Failed to delete comment");
-    }
-  };
-
-  const deleteProject = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this project?")) return;
-    try {
-      await deleteDoc(doc(db, "projects", id));
-      setProjects(projects.filter((project) => project.id !== id));
-      showMessage("success", "Project deleted successfully");
-    } catch (error) {
-      console.error("Error deleting project:", error);
-      showMessage("error", "Failed to delete project");
-    }
-  };
-
-  const deleteCertificate = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this certificate?"))
-      return;
-    try {
-      await deleteDoc(doc(db, "certificates", id));
-      setCertificates(certificates.filter((cert) => cert.id !== id));
-      showMessage("success", "Certificate deleted successfully");
-    } catch (error) {
-      console.error("Error deleting certificate:", error);
-      showMessage("error", "Failed to delete certificate");
-    }
+      setComments((p) => p.filter((c) => c.id !== id));
+      showToast("success", "Comment deleted");
+    } catch { showToast("error", "Failed to delete comment"); }
   };
 
   const handleEmailUpdate = async (e) => {
     e.preventDefault();
-    if (emailDataWithPassword.newEmail !== emailDataWithPassword.confirmEmail) {
-      showMessage("error", "Email addresses do not match!");
-      return;
-    }
-
-    if (!emailDataWithPassword.newEmail) {
-      showMessage("error", "Please enter a valid email address!");
-      return;
-    }
-
-    if (!emailDataWithPassword.currentPassword) {
-      showMessage("error", "Please enter your current password!");
-      return;
-    }
-
+    const { newEmail, confirmEmail, currentPassword } = emailDataWithPassword;
+    if (newEmail !== confirmEmail) return showToast("error", "Emails do not match!");
+    if (!newEmail || !currentPassword) return showToast("error", "Please fill all fields.");
     try {
-      // Re-authenticate user before updating email
-      const credential = EmailAuthProvider.credential(
-        user.email,
-        emailDataWithPassword.currentPassword
-      );
-      await reauthenticateWithCredential(user, credential);
-
-      // Update email
-      await updateEmail(user, emailDataWithPassword.newEmail);
-      showMessage("success", "Email updated successfully!");
-      setEmailDataWithPassword({
-        newEmail: "",
-        confirmEmail: "",
-        currentPassword: "",
-      });
+      const cred = EmailAuthProvider.credential(user.email, currentPassword);
+      await reauthenticateWithCredential(user, cred);
+      await updateEmail(user, newEmail);
+      showToast("success", "Email updated!");
+      setEmailDataWithPassword({ newEmail: "", confirmEmail: "", currentPassword: "" });
       setShowEmailForm(false);
-    } catch (error) {
-      if (error.code === "auth/wrong-password") {
-        showMessage("error", "Incorrect current password!");
-      } else if (error.code === "auth/requires-recent-login") {
-        showMessage("error", "Please log in again to update your email.");
-      } else if (error.code === "auth/email-already-in-use") {
-        showMessage("error", "Email is already in use!");
-      } else if (error.code === "auth/invalid-email") {
-        showMessage("error", "Invalid email address!");
-      } else {
-        showMessage("error", `Error updating email: ${error.message}`);
-      }
+    } catch (err) {
+      showToast("error", err.code === "auth/wrong-password" ? "Wrong password." : err.message);
     }
   };
 
   const handlePasswordUpdate = async (e) => {
     e.preventDefault();
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      showMessage("error", "Passwords do not match!");
-      return;
-    }
-
-    if (passwordData.newPassword.length < 6) {
-      showMessage("error", "Password should be at least 6 characters!");
-      return;
-    }
-
-    if (!passwordData.currentPassword) {
-      showMessage("error", "Please enter your current password!");
-      return;
-    }
-
+    const { currentPassword, newPassword, confirmPassword } = passwordData;
+    if (newPassword !== confirmPassword) return showToast("error", "Passwords do not match!");
+    if (newPassword.length < 6) return showToast("error", "Min 6 characters.");
     try {
-      // Re-authenticate user before updating password
-      const credential = EmailAuthProvider.credential(
-        user.email,
-        passwordData.currentPassword
-      );
-      await reauthenticateWithCredential(user, credential);
-
-      // Update password
-      await updatePassword(user, passwordData.newPassword);
-      showMessage("success", "Password updated successfully!");
-      setPasswordData({
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      });
+      const cred = EmailAuthProvider.credential(user.email, currentPassword);
+      await reauthenticateWithCredential(user, cred);
+      await updatePassword(user, newPassword);
+      showToast("success", "Password updated!");
+      setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
       setShowPasswordForm(false);
-    } catch (error) {
-      if (error.code === "auth/wrong-password") {
-        showMessage("error", "Incorrect current password!");
-      } else if (error.code === "auth/requires-recent-login") {
-        showMessage("error", "Please log in again to update your password.");
-      } else if (error.code === "auth/weak-password") {
-        showMessage("error", "Password is too weak!");
-      } else {
-        showMessage("error", `Error updating password: ${error.message}`);
-      }
+    } catch (err) {
+      showToast("error", err.code === "auth/wrong-password" ? "Wrong password." : err.message);
     }
   };
 
-  const uploadFile = async (file, path) => {
-    try {
-      const storageRef = ref(getStorage(), `${path}/${Date.now()}_${file.name}`);
-      await uploadBytes(storageRef, file);
-      return await getDownloadURL(storageRef);
-    } catch (error) {
-      console.error("Error uploading file:", error);
-      throw error;
-    }
-  };
+  /* tab config */
+  const tabs = [
+    { id: "messages",  label: "Messages",  icon: Inbox,         count: messages.length,  color: "#6366f1" },
+    { id: "comments",  label: "Comments",  icon: MessageSquare, count: comments.length,  color: "#a855f7" },
+    { id: "settings",  label: "Settings",  icon: Settings,      count: null,             color: "#06b6d4" },
+  ];
 
-  const handleProjectSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      setUploading(true);
-      let imageUrl = projectForm.Img;
-
-      // Check if Img is a File object (from file input)
-      if (projectForm.Img instanceof File) {
-        imageUrl = await uploadFile(projectForm.Img, "projects");
-      }
-
-      const docRef = await addDoc(collection(db, "projects"), {
-        ...projectForm,
-        Img: imageUrl,
-        TechStack: projectForm.TechStack.split(",").map((s) => s.trim()),
-        timestamp: new Date(),
-      });
-
-      setProjects([
-        { id: docRef.id, ...projectForm, Img: imageUrl, TechStack: projectForm.TechStack.split(",").map((s) => s.trim()) },
-        ...projects,
-      ]);
-      setProjectForm({ Title: "", Description: "", Link: "", Img: "", TechStack: "" });
-      setIsAddingProject(false);
-      showMessage("success", "Project added successfully!");
-    } catch (error) {
-      console.error("Error adding project:", error);
-      showMessage("error", "Failed to add project");
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const handleCertSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      setUploading(true);
-      let imageUrl = certForm.Img;
-
-      if (certForm.Img instanceof File) {
-        imageUrl = await uploadFile(certForm.Img, "certificates");
-      }
-
-      const docRef = await addDoc(collection(db, "certificates"), {
-        ...certForm,
-        Img: imageUrl,
-        timestamp: new Date(),
-      });
-
-      setCertificates([
-        { id: docRef.id, ...certForm, Img: imageUrl },
-        ...certificates,
-      ]);
-      setCertForm({ Title: "", Img: "" });
-      setIsAddingCert(false);
-      showMessage("success", "Certificate added successfully!");
-    } catch (error) {
-      console.error("Error adding certificate:", error);
-      showMessage("error", "Failed to add certificate");
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#030014] flex items-center justify-center">
-        <div className="text-white text-xl">Loading...</div>
+  if (loading) return (
+    <div className="min-h-screen bg-[#030014] flex items-center justify-center">
+      <div className="flex flex-col items-center gap-4">
+        <div className="w-12 h-12 rounded-full border-2 border-indigo-500 border-t-transparent animate-spin" />
+        <p className="text-white/40 text-sm tracking-widest uppercase">Loading</p>
       </div>
-    );
-  }
+    </div>
+  );
 
   return (
-      <div className="w-full min-h-screen bg-[#030014] text-white">
-        <div className="w-full px-4 sm:px-6 md:px-8 lg:px-10 py-6 sm:py-8 md:py-10">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 sm:mb-8 gap-4 md:gap-0">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#6366f1] to-[#a855f7] bg-clip-text text-transparent">
-            Admin Panel
-          </h1>
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center w-full md:w-auto">
-            <nav className="flex gap-1 sm:gap-2 bg-[#0f0c29]/50 p-1 sm:p-2 rounded-lg border border-gray-700 flex-wrap sm:flex-nowrap">
-              {["messages", "comments", "projects", "certificates", "settings"].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm transition-all whitespace-nowrap ${activeTab === tab
-                    ? "bg-[#6366f1] text-white shadow-lg"
-                    : "text-gray-400 hover:text-white"
-                    } capitalize`}
+    <div className="min-h-screen bg-[#030014] text-white overflow-x-hidden">
+
+      {/* ── ambient bg orbs ── */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-indigo-600/10 blur-[120px]" />
+        <div className="absolute top-1/2 -right-40 w-[500px] h-[500px] rounded-full bg-purple-600/10 blur-[120px]" />
+        <div className="absolute -bottom-40 left-1/3 w-[400px] h-[400px] rounded-full bg-cyan-600/8 blur-[120px]" />
+      </div>
+
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+        {/* ── top header ── */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-10">
+          <div>
+            <p className="text-white/40 text-xs uppercase tracking-[0.2em] mb-1">Control Panel</p>
+            <h1 className="text-3xl sm:text-4xl font-black tracking-tight">
+              <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                Admin Dashboard
+              </span>
+            </h1>
+          </div>
+
+          {/* profile pill */}
+          <GlassCard className="flex items-center gap-3 px-4 py-3" glow="indigo">
+            <div className="relative">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                <User className="w-5 h-5 text-white" />
+              </div>
+              <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-400 border-2 border-[#030014]" />
+            </div>
+            <div className="leading-tight">
+              <p className="text-sm font-semibold">Admin</p>
+              <p className="text-[11px] text-white/40 truncate max-w-[140px]">{user?.email}</p>
+            </div>
+            <button
+              onClick={async () => { await signOut(auth); navigate("/login"); }}
+              className="ml-2 p-1.5 rounded-lg text-white/30 hover:text-red-400 hover:bg-red-400/10 transition-all"
+              title="Logout"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </GlassCard>
+        </div>
+
+        {/* ── stat cards ── */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10">
+          {[
+            { label: "Messages",  value: messages.length,  icon: Inbox,         from: "#6366f1", to: "#818cf8" },
+            { label: "Comments",  value: comments.length,  icon: MessageSquare, from: "#a855f7", to: "#c084fc" },
+            { label: "Status",    value: "Active",         icon: Shield,        from: "#06b6d4", to: "#67e8f9" },
+          ].map((s) => (
+            <GlassCard key={s.label} className="p-5" glow="indigo">
+              <div className="flex items-start justify-between mb-3">
+                <p className="text-white/40 text-xs uppercase tracking-widest">{s.label}</p>
+                <div
+                  className="w-8 h-8 rounded-lg flex items-center justify-center"
+                  style={{ background: `linear-gradient(135deg, ${s.from}33, ${s.to}22)` }}
                 >
-                  {tab}
-                </button>
-              ))}
-            </nav>
-          </div>
+                  <s.icon className="w-4 h-4" style={{ color: s.from }} />
+                </div>
+              </div>
+              <p
+                className="text-2xl font-black tracking-tight"
+                style={{ background: `linear-gradient(135deg, ${s.from}, ${s.to})`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
+              >
+                {s.value}
+              </p>
+            </GlassCard>
+          ))}
         </div>
 
-        {/* User Info & Global Msg */}
-        <div className="bg-[#0f0c29]/50 backdrop-blur-lg rounded-lg sm:rounded-xl p-4 sm:p-6 mb-6 sm:mb-8 border border-gray-700">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-r from-[#6366f1] to-[#a855f7] flex items-center justify-center flex-shrink-0">
-              <User className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-            </div>
-            <div className="min-w-0">
-              <h2 className="text-lg sm:text-xl font-semibold">Welcome, Admin</h2>
-              {user && <p className="text-gray-400 text-sm">{user.email}</p>}
-            </div>
-          </div>
+        {/* ── tab navigation ── */}
+        <div className="flex gap-1 p-1 bg-white/[0.03] border border-white/[0.08] rounded-2xl mb-8 w-fit">
+          {tabs.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setActiveTab(t.id)}
+              className={`
+                relative flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl text-sm font-semibold
+                transition-all duration-300
+                ${activeTab === t.id
+                  ? "text-white shadow-lg"
+                  : "text-white/40 hover:text-white/70"
+                }
+              `}
+              style={activeTab === t.id ? {
+                background: `linear-gradient(135deg, ${t.color}33, ${t.color}11)`,
+                boxShadow: `0 0 20px -4px ${t.color}66`,
+                borderColor: `${t.color}44`,
+                border: "1px solid",
+              } : {}}
+            >
+              <t.icon className="w-4 h-4" />
+              <span className="hidden sm:inline">{t.label}</span>
+              {t.count !== null && (
+                <span
+                  className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                  style={{ background: `${t.color}33`, color: t.color }}
+                >
+                  {t.count}
+                </span>
+              )}
+            </button>
+          ))}
         </div>
 
-        {message.text && (
-          <div
-            className={`mb-6 p-3 sm:p-4 rounded-lg animate-fade-in text-sm sm:text-base ${message.type === "success"
-              ? "bg-green-900/50 border border-green-500 text-green-200"
-              : "bg-red-900/50 border border-red-500 text-red-200"
-              }`}
-          >
-            {message.text}
+        {/* ── toast ── */}
+        {toast.text && (
+          <div className={`
+            mb-6 px-5 py-3.5 rounded-2xl text-sm font-medium flex items-center gap-3
+            border backdrop-blur-xl animate-slide-up
+            ${toast.type === "success"
+              ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-300"
+              : "bg-red-500/10 border-red-500/30 text-red-300"
+            }
+          `}>
+            <span className={`w-2 h-2 rounded-full flex-shrink-0 ${toast.type === "success" ? "bg-emerald-400" : "bg-red-400"}`} />
+            {toast.text}
           </div>
         )}
 
-        {/* Tab Content */}
-        <div className="space-y-8">
-          {activeTab === "messages" && (
-            <div className="bg-[#0f0c29]/50 backdrop-blur-lg rounded-xl p-6 border border-gray-700">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-semibold flex items-center gap-2">
-                  <Mail className="w-5 h-5 text-[#6366f1]" />
-                  Internal Messages
-                  <span className="text-sm bg-[#6366f1]/20 text-[#6366f1] px-2 py-1 rounded-full">
-                    {messages.length}
-                  </span>
-                </h3>
-              </div>
-
-              {loadingMessages ? (
-                <div className="text-center py-8">
-                  <div className="inline-block animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-t-2 border-b-2 border-[#6366f1]"></div>
-                  <p className="mt-2 text-gray-400">Loading messages...</p>
+        {/* ══════════════════════════════════════
+            TAB: MESSAGES
+        ══════════════════════════════════════ */}
+        {activeTab === "messages" && (
+          <GlassCard glow="indigo">
+            <div className="p-6 border-b border-white/[0.06]">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-indigo-500/20 flex items-center justify-center">
+                  <Inbox className="w-5 h-5 text-indigo-400" />
                 </div>
+                <div>
+                  <h2 className="font-bold text-lg">Messages</h2>
+                  <p className="text-white/40 text-xs">Contact form submissions</p>
+                </div>
+                <Badge count={messages.length} color="#6366f1" />
+              </div>
+            </div>
+
+            <div className="p-6">
+              {loadingMessages ? (
+                <Spinner color="#6366f1" />
               ) : messages.length === 0 ? (
-                <p className="text-gray-400 text-center py-10 italic">No messages found</p>
+                <EmptyState icon={Inbox} text="No messages yet" />
               ) : (
-                <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+                <div className="space-y-3 max-h-[560px] overflow-y-auto custom-scrollbar pr-1">
                   {messages.map((msg) => (
-                    <div key={msg.id} className="bg-[#1a1a2e]/50 p-5 rounded-xl border border-gray-700 hover:border-gray-600 transition-all group">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <div className="flex flex-wrap items-center gap-2 mb-2">
-                            <span className="font-semibold text-white">{msg.name}</span>
-                            <span className="text-gray-400 text-sm">&lt;{msg.email}&gt;</span>
-                            <span className="text-gray-500 text-xs">
-                              {msg.timestamp?.toDate?.()?.toLocaleString() || new Date(msg.timestamp).toLocaleString()}
+                    <div
+                      key={msg.id}
+                      className="group relative bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.07] hover:border-indigo-500/30 rounded-xl p-4 sm:p-5 transition-all duration-200"
+                    >
+                      <div className="flex justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mb-2">
+                            <span className="font-bold text-sm text-white">{msg.name}</span>
+                            <span className="text-indigo-400/80 text-xs truncate">{msg.email}</span>
+                            <span className="text-white/25 text-[11px] ml-auto">
+                              {toDate(msg.timestamp).toLocaleString()}
                             </span>
                           </div>
-                          <p className="text-gray-300 whitespace-pre-wrap">{msg.message}</p>
+                          <p className="text-white/60 text-sm leading-relaxed whitespace-pre-wrap">{msg.message}</p>
                         </div>
                         <button
                           onClick={() => deleteMessage(msg.id)}
-                          className="p-2 text-gray-500 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all"
+                          className="flex-shrink-0 w-8 h-8 rounded-lg text-white/20 hover:text-red-400 hover:bg-red-400/10 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"
                         >
-                          <Trash2 className="w-5 h-5" />
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     </div>
@@ -559,46 +394,57 @@ const AdminPage = () => {
                 </div>
               )}
             </div>
-          )}
+          </GlassCard>
+        )}
 
-          {activeTab === "comments" && (
-            <div className="bg-[#0f0c29]/50 backdrop-blur-lg rounded-xl p-6 border border-gray-700">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-semibold flex items-center gap-2">
-                  <MessageSquare className="w-5 h-5 text-[#a855f7]" />
-                  Portfolio Comments
-                  <span className="text-sm bg-[#a855f7]/20 text-[#a855f7] px-2 py-1 rounded-full">
-                    {comments.length}
-                  </span>
-                </h3>
-              </div>
-
-              {loadingComments ? (
-                <div className="text-center py-8">
-                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#a855f7]"></div>
-                  <p className="mt-2 text-gray-400">Loading comments...</p>
+        {/* ══════════════════════════════════════
+            TAB: COMMENTS
+        ══════════════════════════════════════ */}
+        {activeTab === "comments" && (
+          <GlassCard glow="purple">
+            <div className="p-6 border-b border-white/[0.06]">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-purple-500/20 flex items-center justify-center">
+                  <MessageSquare className="w-5 h-5 text-purple-400" />
                 </div>
+                <div>
+                  <h2 className="font-bold text-lg">Comments</h2>
+                  <p className="text-white/40 text-xs">Portfolio visitor comments</p>
+                </div>
+                <Badge count={comments.length} color="#a855f7" />
+              </div>
+            </div>
+
+            <div className="p-6">
+              {loadingComments ? (
+                <Spinner color="#a855f7" />
               ) : comments.length === 0 ? (
-                <p className="text-gray-400 text-center py-10 italic">No comments found</p>
+                <EmptyState icon={MessageSquare} text="No comments yet" />
               ) : (
-                <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
-                  {comments.map((comment) => (
-                    <div key={comment.id} className="bg-[#1a1a2e]/50 p-5 rounded-xl border border-gray-700 hover:border-gray-600 transition-all">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <span className="font-semibold text-white">{comment.userName || comment.name}</span>
-                            <span className="text-gray-500 text-xs">
-                              {comment.timestamp?.toDate?.()?.toLocaleString() || new Date(comment.timestamp).toLocaleString()}
+                <div className="space-y-3 max-h-[560px] overflow-y-auto custom-scrollbar pr-1">
+                  {comments.map((c) => (
+                    <div
+                      key={c.id}
+                      className="group relative bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.07] hover:border-purple-500/30 rounded-xl p-4 sm:p-5 transition-all duration-200"
+                    >
+                      <div className="flex justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-[11px] font-bold flex-shrink-0">
+                              {(c.userName || c.name || "?")[0].toUpperCase()}
+                            </div>
+                            <span className="font-bold text-sm">{c.userName || c.name}</span>
+                            <span className="text-white/25 text-[11px] ml-auto">
+                              {toDate(c.timestamp).toLocaleString()}
                             </span>
                           </div>
-                          <p className="text-gray-300">{comment.content || comment.comment}</p>
+                          <p className="text-white/60 text-sm leading-relaxed pl-9">{c.content || c.comment}</p>
                         </div>
                         <button
-                          onClick={() => deleteComment(comment.id)}
-                          className="p-2 text-gray-500 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all"
+                          onClick={() => deleteComment(c.id)}
+                          className="flex-shrink-0 w-8 h-8 rounded-lg text-white/20 hover:text-red-400 hover:bg-red-400/10 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"
                         >
-                          <Trash2 className="w-5 h-5" />
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     </div>
@@ -606,278 +452,167 @@ const AdminPage = () => {
                 </div>
               )}
             </div>
-          )}
+          </GlassCard>
+        )}
 
-          {activeTab === "projects" && (
-            <div className="space-y-6">
-              <div className="bg-[#0f0c29]/50 backdrop-blur-lg rounded-xl p-6 border border-gray-700">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-semibold flex items-center gap-2">
-                    <Lock className="w-5 h-5 text-[#6366f1]" />
-                    Projects Management
-                  </h3>
-                  <button
-                    onClick={() => setIsAddingProject(!isAddingProject)}
-                    className="px-4 py-2 bg-[#6366f1] hover:bg-[#5555e5] rounded-lg transition-colors flex items-center gap-2"
-                  >
-                    {isAddingProject ? "Cancel" : "Add Project"}
-                  </button>
+        {/* ══════════════════════════════════════
+            TAB: SETTINGS
+        ══════════════════════════════════════ */}
+        {activeTab === "settings" && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            {/* update email */}
+            <GlassCard glow="indigo" className="p-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-9 h-9 rounded-xl bg-indigo-500/20 flex items-center justify-center">
+                  <Mail className="w-5 h-5 text-indigo-400" />
                 </div>
-
-                {isAddingProject && (
-                  <form onSubmit={handleProjectSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 bg-[#1a1a2e]/30 p-6 rounded-xl border border-gray-700 animate-fade-in">
-                    <div className="space-y-4">
-                      <input
-                        type="text"
-                        placeholder="Project Title"
-                        value={projectForm.Title}
-                        onChange={(e) => setProjectForm({ ...projectForm, Title: e.target.value })}
-                        className="w-full px-4 py-2 bg-[#1a1a2e] border border-gray-700 rounded-lg focus:ring-2 focus:ring-[#6366f1] outline-none"
-                        required
-                      />
-                      <input
-                        type="url"
-                        placeholder="Live/Demo Link"
-                        value={projectForm.Link}
-                        onChange={(e) => setProjectForm({ ...projectForm, Link: e.target.value })}
-                        className="w-full px-4 py-2 bg-[#1a1a2e] border border-gray-700 rounded-lg focus:ring-2 focus:ring-[#6366f1] outline-none"
-                        required
-                      />
-                      <input
-                        type="text"
-                        placeholder="Tech Stack (comma separated)"
-                        value={projectForm.TechStack}
-                        onChange={(e) => setProjectForm({ ...projectForm, TechStack: e.target.value })}
-                        className="w-full px-4 py-2 bg-[#1a1a2e] border border-gray-700 rounded-lg focus:ring-2 focus:ring-[#6366f1] outline-none"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-1.5 ml-1">Banner Image</label>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => setProjectForm({ ...projectForm, Img: e.target.files[0] })}
-                          className="w-full px-4 py-2 bg-[#1a1a2e] border border-gray-700 rounded-lg focus:ring-2 focus:ring-[#6366f1] outline-none file:bg-[#6366f1] file:border-none file:text-white file:rounded-md file:px-2 file:py-1 file:mr-2 file:cursor-pointer"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-1.5 ml-1">Project Brief</label>
-                        <textarea
-                          placeholder="Project Description"
-                          value={projectForm.Description}
-                          onChange={(e) => setProjectForm({ ...projectForm, Description: e.target.value })}
-                          className="w-full h-24 px-4 py-2 bg-[#1a1a2e] border border-gray-700 rounded-lg focus:ring-2 focus:ring-[#6366f1] outline-none resize-none"
-                          required
-                        />
-                      </div>
-                      <button
-                        type="submit"
-                        disabled={uploading}
-                        className="w-full py-2 bg-gradient-to-r from-[#6366f1] to-[#a855f7] rounded-lg font-bold transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
-                      >
-                        {uploading ? "Saving..." : "Add Project"}
-                      </button>
-                    </div>
-                  </form>
-                )}
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {projects.map((project) => (
-                    <div key={project.id} className="bg-[#1a1a2e]/50 border border-gray-700 rounded-xl overflow-hidden hover:border-gray-600 transition-all">
-                      <img src={project.Img} alt="" className="w-full h-40 object-cover" />
-                      <div className="p-4">
-                        <h4 className="font-bold text-lg mb-2 truncate">{project.Title}</h4>
-                        <div className="flex flex-wrap gap-1 mb-4">
-                          {project.TechStack?.map((tech, i) => (
-                            <span key={i} className="text-[10px] px-2 py-0.5 bg-[#6366f1]/10 text-[#6366f1] rounded-full border border-[#6366f1]/30">{tech}</span>
-                          ))}
-                        </div>
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => deleteProject(project.id)}
-                            className="flex-1 py-1.5 bg-red-600/10 text-red-500 hover:bg-red-600 hover:text-white rounded-lg border border-red-600/50 transition-all text-sm font-semibold"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                <div>
+                  <h3 className="font-bold">Update Email</h3>
+                  <p className="text-white/40 text-xs">Change your admin email address</p>
                 </div>
               </div>
-            </div>
-          )}
 
-          {activeTab === "certificates" && (
-            <div className="bg-[#0f0c29]/50 backdrop-blur-lg rounded-xl p-6 border border-gray-700">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-semibold flex items-center gap-2">
-                  <Lock className="w-5 h-5 text-[#a855f7]" />
-                  Certificates Management
-                </h3>
+              {!showEmailForm ? (
                 <button
-                  onClick={() => setIsAddingCert(!isAddingCert)}
-                  className="px-4 py-2 bg-[#a855f7] hover:bg-[#9a4ae0] rounded-lg transition-colors flex items-center gap-2"
+                  onClick={() => setShowEmailForm(true)}
+                  className="w-full py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all duration-200 hover:gap-3"
+                  style={{ background: "linear-gradient(135deg, #6366f133, #818cf811)", border: "1px solid #6366f144", color: "#818cf8" }}
                 >
-                  {isAddingCert ? "Cancel" : "Add Certificate"}
+                  Change Email <ChevronRight className="w-4 h-4" />
                 </button>
-              </div>
-
-              {isAddingCert && (
-                <form onSubmit={handleCertSubmit} className="space-y-4 mb-8 bg-[#1a1a2e]/30 p-6 rounded-xl border border-gray-700 animate-fade-in max-w-xl">
-                  <input
-                    type="text"
-                    placeholder="Certificate Title"
-                    value={certForm.Title}
-                    onChange={(e) => setCertForm({ ...certForm, Title: e.target.value })}
-                    className="w-full px-4 py-2 bg-[#1a1a2e] border border-gray-700 rounded-lg focus:ring-2 focus:ring-[#a855f7] outline-none"
-                    required
-                  />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setCertForm({ ...certForm, Img: e.target.files[0] })}
-                    className="w-full px-4 py-2 bg-[#1a1a2e] border border-gray-700 rounded-lg focus:ring-2 focus:ring-[#a855f7] outline-none file:bg-[#a855f7] file:border-none file:text-white file:rounded-md file:px-2 file:py-1 file:mr-2 file:cursor-pointer"
-                    required
-                  />
-                  <button
-                    type="submit"
-                    disabled={uploading}
-                    className="w-full py-2 bg-gradient-to-r from-[#a855f7] to-[#6366f1] rounded-lg font-bold transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
-                  >
-                    {uploading ? "Uploading..." : "Save Certificate"}
-                  </button>
-                </form>
-              )}
-
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                {certificates.map((cert) => (
-                  <div key={cert.id} className="relative group bg-[#1a1a2e]/50 border border-gray-700 rounded-lg overflow-hidden transition-all hover:border-[#a855f7]/50">
-                    <img src={cert.Img} alt="" className="w-full aspect-[4/3] object-cover" />
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-2 text-center flex-col gap-2">
-                      <p className="text-[10px] line-clamp-2">{cert.Title}</p>
-                      <button
-                        onClick={() => deleteCertificate(cert.id)}
-                        className="bg-red-500/80 hover:bg-red-500 p-1.5 rounded-full transition-colors"
-                      >
-                        <Trash2 className="w-3.5 h-3.5 text-white" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-
-          {activeTab === "settings" && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">
-              {/* Settings forms (Email/Password and Logout) */}
-              <div className="bg-[#0f0c29]/50 backdrop-blur-lg rounded-xl p-6 border border-gray-700">
-                <div className="flex items-center gap-3 mb-6">
-                  <Mail className="w-5 h-5 text-[#6366f1]" />
-                  <h3 className="text-xl font-semibold">Update Email</h3>
-                </div>
-                {!showEmailForm ? (
-                  <button onClick={() => setShowEmailForm(true)} className="w-full py-2 bg-[#6366f1] hover:bg-[#5555e5] rounded-lg transition-colors font-medium">Change Admin Email</button>
-                ) : (
-                  <form onSubmit={handleEmailUpdate} className="space-y-4">
+              ) : (
+                <form onSubmit={handleEmailUpdate} className="space-y-3">
+                  <div className="relative">
+                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-indigo-400" />
                     <input
                       type={showCurrentPassword ? "text" : "password"}
                       placeholder="Current Password"
                       value={emailDataWithPassword.currentPassword}
                       onChange={(e) => setEmailDataWithPassword({ ...emailDataWithPassword, currentPassword: e.target.value })}
-                      className="w-full px-4 py-2 bg-[#1a1a2e] border border-gray-700 rounded-lg focus:ring-2 focus:ring-[#6366f1] outline-none"
+                      className="w-full pl-10 pr-10 py-3 bg-white/[0.05] border border-white/10 rounded-xl text-white placeholder-white/30 text-sm focus:outline-none focus:border-indigo-500/50 transition-all"
                       required
                     />
-                    <input
-                      type="email"
-                      placeholder="New Email"
-                      value={emailDataWithPassword.newEmail}
-                      onChange={(e) => setEmailDataWithPassword({ ...emailDataWithPassword, newEmail: e.target.value })}
-                      className="w-full px-4 py-2 bg-[#1a1a2e] border border-gray-700 rounded-lg focus:ring-2 focus:ring-[#6366f1] outline-none"
-                      required
-                    />
-                    <input
-                      type="email"
-                      placeholder="Confirm New Email"
-                      value={emailDataWithPassword.confirmEmail}
-                      onChange={(e) => setEmailDataWithPassword({ ...emailDataWithPassword, confirmEmail: e.target.value })}
-                      className="w-full px-4 py-2 bg-[#1a1a2e] border border-gray-700 rounded-lg focus:ring-2 focus:ring-[#6366f1] outline-none"
-                      required
-                    />
-                    <div className="flex gap-2">
-                      <button type="submit" className="flex-1 py-2 bg-[#6366f1] hover:bg-[#5555e5] rounded-lg font-bold transition-colors">Update</button>
-                      <button type="button" onClick={() => setShowEmailForm(false)} className="px-4 py-2 bg-gray-700 rounded-lg font-medium">Cancel</button>
-                    </div>
-                  </form>
-                )}
+                    <button type="button" onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60">
+                      {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                  <GlassInput icon={Mail} accentColor="#6366f1" type="email" placeholder="New Email"
+                    value={emailDataWithPassword.newEmail}
+                    onChange={(e) => setEmailDataWithPassword({ ...emailDataWithPassword, newEmail: e.target.value })} required />
+                  <GlassInput icon={Mail} accentColor="#6366f1" type="email" placeholder="Confirm New Email"
+                    value={emailDataWithPassword.confirmEmail}
+                    onChange={(e) => setEmailDataWithPassword({ ...emailDataWithPassword, confirmEmail: e.target.value })} required />
+                  <div className="flex gap-2 pt-1">
+                    <button type="submit"
+                      className="flex-1 py-2.5 rounded-xl font-bold text-sm text-white transition-all hover:opacity-90"
+                      style={{ background: "linear-gradient(135deg,#6366f1,#818cf8)" }}>
+                      Update Email
+                    </button>
+                    <button type="button" onClick={() => setShowEmailForm(false)}
+                      className="px-4 py-2.5 rounded-xl font-medium text-sm text-white/50 bg-white/[0.05] border border-white/10 hover:text-white/80 transition-all">
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              )}
+            </GlassCard>
+
+            {/* update password */}
+            <GlassCard glow="purple" className="p-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-9 h-9 rounded-xl bg-purple-500/20 flex items-center justify-center">
+                  <Lock className="w-5 h-5 text-purple-400" />
+                </div>
+                <div>
+                  <h3 className="font-bold">Update Password</h3>
+                  <p className="text-white/40 text-xs">Change your login password</p>
+                </div>
               </div>
 
-              <div className="bg-[#0f0c29]/50 backdrop-blur-lg rounded-xl p-6 border border-gray-700 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center gap-3 mb-6">
-                    <Lock className="w-5 h-5 text-[#a855f7]" />
-                    <h3 className="text-xl font-semibold">Update Password</h3>
+              {!showPasswordForm ? (
+                <button
+                  onClick={() => setShowPasswordForm(true)}
+                  className="w-full py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all duration-200 hover:gap-3"
+                  style={{ background: "linear-gradient(135deg, #a855f733, #c084fc11)", border: "1px solid #a855f744", color: "#c084fc" }}
+                >
+                  Change Password <ChevronRight className="w-4 h-4" />
+                </button>
+              ) : (
+                <form onSubmit={handlePasswordUpdate} className="space-y-3">
+                  {[
+                    { placeholder: "Current Password", key: "currentPassword", show: showCurrentPassword, toggle: () => setShowCurrentPassword(!showCurrentPassword) },
+                    { placeholder: "New Password",      key: "newPassword",     show: showNewPassword,     toggle: () => setShowNewPassword(!showNewPassword) },
+                    { placeholder: "Confirm Password",  key: "confirmPassword", show: showConfirmPassword,  toggle: () => setShowConfirmPassword(!showConfirmPassword) },
+                  ].map((f) => (
+                    <div key={f.key} className="relative">
+                      <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-purple-400" />
+                      <input
+                        type={f.show ? "text" : "password"}
+                        placeholder={f.placeholder}
+                        value={passwordData[f.key]}
+                        onChange={(e) => setPasswordData({ ...passwordData, [f.key]: e.target.value })}
+                        className="w-full pl-10 pr-10 py-3 bg-white/[0.05] border border-white/10 rounded-xl text-white placeholder-white/30 text-sm focus:outline-none focus:border-purple-500/50 transition-all"
+                        required
+                      />
+                      <button type="button" onClick={f.toggle}
+                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60">
+                        {f.show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  ))}
+                  <div className="flex gap-2 pt-1">
+                    <button type="submit"
+                      className="flex-1 py-2.5 rounded-xl font-bold text-sm text-white transition-all hover:opacity-90"
+                      style={{ background: "linear-gradient(135deg,#a855f7,#c084fc)" }}>
+                      Update Password
+                    </button>
+                    <button type="button" onClick={() => setShowPasswordForm(false)}
+                      className="px-4 py-2.5 rounded-xl font-medium text-sm text-white/50 bg-white/[0.05] border border-white/10 hover:text-white/80 transition-all">
+                      Cancel
+                    </button>
                   </div>
-                  {!showPasswordForm ? (
-                    <button onClick={() => setShowPasswordForm(true)} className="w-full py-2 bg-[#a855f7] hover:bg-[#9a4ae0] rounded-lg transition-colors font-medium">Change Password</button>
-                  ) : (
-                    <form onSubmit={handlePasswordUpdate} className="space-y-4">
-                      <input
-                        type={showCurrentPassword ? "text" : "password"}
-                        placeholder="Current Password"
-                        value={passwordData.currentPassword}
-                        onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-                        className="w-full px-4 py-2 bg-[#1a1a2e] border border-gray-700 rounded-lg focus:ring-2 focus:ring-[#a855f7] outline-none"
-                        required
-                      />
-                      <input
-                        type={showNewPassword ? "text" : "password"}
-                        placeholder="New Password"
-                        value={passwordData.newPassword}
-                        onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                        className="w-full px-4 py-2 bg-[#1a1a2e] border border-gray-700 rounded-lg focus:ring-2 focus:ring-[#a855f7] outline-none"
-                        required
-                      />
-                      <input
-                        type={showConfirmPassword ? "text" : "password"}
-                        placeholder="Confirm New Password"
-                        value={passwordData.confirmPassword}
-                        onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                        className="w-full px-4 py-2 bg-[#1a1a2e] border border-gray-700 rounded-lg focus:ring-2 focus:ring-[#a855f7] outline-none"
-                        required
-                      />
-                      <div className="flex gap-2">
-                        <button type="submit" className="flex-1 py-2 bg-[#a855f7] hover:bg-[#9a4ae0] rounded-lg font-bold transition-colors">Update</button>
-                        <button type="button" onClick={() => setShowPasswordForm(false)} className="px-4 py-2 bg-gray-700 rounded-lg font-medium">Cancel</button>
-                      </div>
-                    </form>
-                  )}
+                </form>
+              )}
+            </GlassCard>
+
+            {/* danger zone */}
+            <GlassCard glow="red" className="p-6 lg:col-span-2">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-9 h-9 rounded-xl bg-red-500/20 flex items-center justify-center">
+                  <LogOut className="w-5 h-5 text-red-400" />
                 </div>
-                <div className="mt-6">
-                  <button
-                    onClick={handleLogout}
-                    className="w-full py-3 bg-red-600 hover:bg-red-700 rounded-lg font-bold transition-colors"
-                  >
-                    Logout
-                  </button>
+                <div>
+                  <h3 className="font-bold">Danger Zone</h3>
+                  <p className="text-white/40 text-xs">Irreversible actions</p>
                 </div>
               </div>
-            </div>
-          )}
-        </div>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-xl border border-red-500/20 bg-red-500/5">
+                <div>
+                  <p className="text-sm font-semibold">Sign out of admin panel</p>
+                  <p className="text-white/40 text-xs mt-0.5">You will be redirected to the login page.</p>
+                </div>
+                <button
+                  onClick={async () => { await signOut(auth); navigate("/login"); }}
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm text-white bg-red-500/20 border border-red-500/40 hover:bg-red-500/30 hover:border-red-500/60 transition-all flex-shrink-0"
+                >
+                  <LogOut className="w-4 h-4" /> Logout
+                </button>
+              </div>
+            </GlassCard>
+          </div>
+        )}
+
       </div>
-      <style jsx="true">{`
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+
+      <style>{`
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #374151; border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #4b5563; }
-        @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade-in { animation: fade-in 0.4s ease-out forwards; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 99px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+        @keyframes slide-up { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+        .animate-slide-up { animation: slide-up 0.3s ease-out forwards; }
       `}</style>
     </div>
   );

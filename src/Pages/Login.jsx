@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { auth, signInWithEmailAndPassword } from "../firebase-auth";
+import { useNavigate } from "react-router-dom";
+import { auth, signInWithEmailAndPassword, sendPasswordResetEmail } from "../firebase-auth";
 import { onAuthStateChanged } from "firebase/auth";
-import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, ArrowLeft, Send } from "lucide-react";
+
+// ── admin contact email — change this to your real email ──
+const ADMIN_EMAIL = "abrhamasrat08@gmail.com";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -10,187 +13,241 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // forgot-password state
+  const [view, setView] = useState("login"); // "login" | "forgot"
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetMsg, setResetMsg] = useState({ type: "", text: "" });
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        navigate("/admin");
-      }
+    const unsub = onAuthStateChanged(auth, (user) => {
+      if (user) navigate("/admin");
     });
-
-    return () => unsubscribe();
+    return unsub;
   }, [navigate]);
 
+  /* ── login ── */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-
     try {
       await signInWithEmailAndPassword(auth, email, password);
       navigate("/admin");
-    } catch (error) {
-      console.error("Login error:", error);
-      switch (error.code) {
-        case "auth/user-not-found":
-          setError("No user found with this email.");
-          break;
-        case "auth/wrong-password":
-          setError("Incorrect password.");
-          break;
-        case "auth/invalid-email":
-          setError("Invalid email address.");
-          break;
-        case "auth/too-many-requests":
-          setError("Too many failed attempts. Please try again later.");
-          break;
-        default:
-          setError(
-            "Failed to login. Please check your credentials and try again."
-          );
+    } catch (err) {
+      switch (err.code) {
+        case "auth/user-not-found":    setError("No account found with this email."); break;
+        case "auth/wrong-password":    setError("Incorrect password."); break;
+        case "auth/invalid-email":     setError("Invalid email address."); break;
+        case "auth/too-many-requests": setError("Too many attempts. Try again later."); break;
+        default:                       setError("Login failed. Check your credentials.");
       }
     } finally {
       setLoading(false);
     }
   };
 
+  /* ── password reset ── */
+  const handleReset = async (e) => {
+    e.preventDefault();
+    if (!resetEmail) return;
+    setResetLoading(true);
+    setResetMsg({ type: "", text: "" });
+    try {
+      await sendPasswordResetEmail(auth, resetEmail);
+      setResetMsg({ type: "success", text: `Reset link sent to ${resetEmail}. Check your inbox.` });
+      setResetEmail("");
+    } catch (err) {
+      if (err.code === "auth/user-not-found") {
+        setResetMsg({ type: "error", text: "No account found with that email." });
+      } else if (err.code === "auth/invalid-email") {
+        setResetMsg({ type: "error", text: "Invalid email address." });
+      } else {
+        setResetMsg({ type: "error", text: "Failed to send reset email. Try again." });
+      }
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
+  /* ── contact admin ── */
+  const handleContact = () => {
+    window.location.href = `mailto:${ADMIN_EMAIL}?subject=Admin%20Access%20Request&body=Hi%2C%20I%20would%20like%20to%20request%20access%20to%20the%20admin%20panel.`;
+  };
+
   return (
-    <div className="min-h-screen bg-[#030014] flex items-center justify-center px-4 sm:px-6 py-6 sm:py-8">
-      <div className="w-full max-w-md">
-        <div className="bg-[#0f0c29]/50 backdrop-blur-lg rounded-lg sm:rounded-2xl p-6 sm:p-8 border border-gray-700 shadow-2xl">
-          <div className="text-center mb-6 sm:mb-8">
-            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#6366f1] to-[#a855f7] bg-clip-text text-transparent mb-2">
-              Admin Login
-            </h1>
-            <p className="text-gray-400 text-sm sm:text-base">Sign in to access the admin panel</p>
-          </div>
+    <div className="min-h-screen bg-[#030014] flex items-center justify-center px-4 py-8 overflow-hidden">
+      {/* ambient orbs */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-indigo-600/10 blur-[120px]" />
+        <div className="absolute -bottom-32 -right-32 w-[500px] h-[500px] rounded-full bg-purple-600/10 blur-[120px]" />
+      </div>
 
-          {error && (
-            <div className="mb-6 p-3 sm:p-4 bg-red-900/50 border border-red-500 rounded-lg text-red-200 text-xs sm:text-sm">
-              {error}
-            </div>
-          )}
+      <div className="relative w-full max-w-md">
 
-          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Email Address
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-500" />
-                </div>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-3 py-2.5 sm:py-3 bg-[#1a1a2e] border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6366f1] text-white placeholder-gray-500 text-sm sm:text-base"
-                  placeholder="admin@example.com"
-                  required
-                />
+        {/* ══ LOGIN VIEW ══ */}
+        {view === "login" && (
+          <div className="bg-white/[0.04] backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl shadow-black/40">
+            {/* header */}
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg shadow-indigo-500/30 mb-4">
+                <Lock className="w-7 h-7 text-white" />
               </div>
+              <h1 className="text-2xl font-black text-white tracking-tight">
+                Admin Login
+              </h1>
+              <p className="text-white/40 text-sm mt-1">Sign in to access the dashboard</p>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-500" />
+            {/* error */}
+            {error && (
+              <div className="mb-5 flex items-center gap-2.5 px-4 py-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-300 text-sm">
+                <span className="w-2 h-2 rounded-full bg-red-400 flex-shrink-0" />
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* email */}
+              <div>
+                <label className="block text-xs font-semibold text-white/50 uppercase tracking-wider mb-2">Email</label>
+                <div className="relative">
+                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-indigo-400" />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="admin@example.com"
+                    required
+                    className="w-full pl-10 pr-4 py-3 bg-white/[0.05] border border-white/10 rounded-xl text-white placeholder-white/25 text-sm focus:outline-none focus:border-indigo-500/50 focus:bg-white/[0.07] transition-all"
+                  />
                 </div>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-10 py-2.5 sm:py-3 bg-[#1a1a2e] border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6366f1] text-white placeholder-gray-500 text-sm sm:text-base"
-                  placeholder="••••••••"
-                  required
-                />
+              </div>
+
+              {/* password */}
+              <div>
+                <label className="block text-xs font-semibold text-white/50 uppercase tracking-wider mb-2">Password</label>
+                <div className="relative">
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-indigo-400" />
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    required
+                    className="w-full pl-10 pr-10 py-3 bg-white/[0.05] border border-white/10 rounded-xl text-white placeholder-white/25 text-sm focus:outline-none focus:border-indigo-500/50 focus:bg-white/[0.07] transition-all"
+                  />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition-colors">
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* forgot */}
+              <div className="flex justify-end">
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-500" />
-                  ) : (
-                    <Eye className="h-5 w-5 text-gray-500" />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 text-[#6366f1] focus:ring-[#6366f1] border-gray-600 rounded bg-[#1a1a2e]"
-                />
-                <label
-                  htmlFor="remember-me"
-                  className="ml-2 block text-sm text-gray-300"
-                >
-                  Remember me
-                </label>
-              </div>
-
-              <div className="text-sm">
-                <Link
-                  to="#"
-                  className="font-medium text-[#6366f1] hover:text-[#5555e5]"
+                  onClick={() => { setView("forgot"); setError(""); }}
+                  className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors font-medium"
                 >
                   Forgot password?
-                </Link>
+                </button>
               </div>
-            </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-[#6366f1] to-[#a855f7] hover:from-[#5555e5] hover:to-[#9a4ae0] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#6366f1] disabled:opacity-50 transition-all duration-300"
-            >
-              {loading ? (
-                <svg
-                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-              ) : null}
-              {loading ? "Signing in..." : "Sign in"}
-            </button>
-          </form>
+              {/* submit */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 shadow-lg shadow-indigo-500/25 transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
+              >
+                {loading && (
+                  <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                )}
+                {loading ? "Signing in…" : "Sign in"}
+              </button>
+            </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-500">
-              Don't have an account?{" "}
-              <Link
-                to="#"
-                className="font-medium text-[#6366f1] hover:text-[#5555e5]"
+            {/* contact */}
+            <div className="mt-6 pt-6 border-t border-white/[0.06] text-center">
+              <p className="text-white/30 text-xs mb-2">Don't have an account?</p>
+              <button
+                onClick={handleContact}
+                className="text-sm font-semibold text-purple-400 hover:text-purple-300 transition-colors underline underline-offset-4 decoration-purple-400/40"
               >
                 Contact administrator
-              </Link>
-            </p>
+              </button>
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* ══ FORGOT PASSWORD VIEW ══ */}
+        {view === "forgot" && (
+          <div className="bg-white/[0.04] backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl shadow-black/40">
+            {/* back */}
+            <button
+              onClick={() => { setView("login"); setResetMsg({ type: "", text: "" }); }}
+              className="flex items-center gap-1.5 text-white/40 hover:text-white/70 text-sm mb-6 transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" /> Back to login
+            </button>
+
+            {/* header */}
+            <div className="mb-7">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-indigo-500/20 mb-4">
+                <Mail className="w-6 h-6 text-indigo-400" />
+              </div>
+              <h2 className="text-xl font-black text-white">Reset Password</h2>
+              <p className="text-white/40 text-sm mt-1">
+                Enter your email and we'll send you a reset link.
+              </p>
+            </div>
+
+            {/* feedback */}
+            {resetMsg.text && (
+              <div className={`mb-5 flex items-start gap-2.5 px-4 py-3 rounded-xl text-sm border ${
+                resetMsg.type === "success"
+                  ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-300"
+                  : "bg-red-500/10 border-red-500/30 text-red-300"
+              }`}>
+                <span className={`mt-0.5 w-2 h-2 rounded-full flex-shrink-0 ${resetMsg.type === "success" ? "bg-emerald-400" : "bg-red-400"}`} />
+                {resetMsg.text}
+              </div>
+            )}
+
+            <form onSubmit={handleReset} className="space-y-4">
+              <div className="relative">
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-indigo-400" />
+                <input
+                  type="email"
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  placeholder="your@email.com"
+                  required
+                  className="w-full pl-10 pr-4 py-3 bg-white/[0.05] border border-white/10 rounded-xl text-white placeholder-white/25 text-sm focus:outline-none focus:border-indigo-500/50 focus:bg-white/[0.07] transition-all"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={resetLoading}
+                className="w-full py-3 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 shadow-lg shadow-indigo-500/25 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {resetLoading
+                  ? <><svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg> Sending…</>
+                  : <><Send className="w-4 h-4" /> Send Reset Link</>
+                }
+              </button>
+            </form>
+          </div>
+        )}
+
       </div>
     </div>
   );
