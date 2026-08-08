@@ -9,26 +9,32 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
-              return 'vendor-react';
-            }
-            if (id.includes('@mui') || id.includes('@emotion')) {
-              return 'vendor-mui';
-            }
-            if (id.includes('framer-motion') || id.includes('@react-spring')) {
-              return 'vendor-animation';
+            if (
+              id.includes('react') ||
+              id.includes('react-dom') ||
+              id.includes('react-router') ||
+              id.includes('@mui') ||
+              id.includes('@emotion') ||
+              id.includes('styled-components')
+            ) {
+              return 'vendor-core';
             }
             if (id.includes('firebase')) {
               return 'vendor-firebase';
             }
-            if (id.includes('lucide-react') || id.includes('@heroicons')) {
-              return 'vendor-icons';
+            if (
+              id.includes('framer-motion') ||
+              id.includes('@react-spring') ||
+              id.includes('gsap') ||
+              id.includes('aos')
+            ) {
+              return 'vendor-animation';
             }
-            return 'vendor-misc';
+            return 'vendor-utils';
           }
         },
       },
     },
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 1200,
   },
 })
