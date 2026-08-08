@@ -7,23 +7,23 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 
 /* ─── constants ─────────────────────────────────────── */
-const TYPING_SPEED   = 90;
-const ERASING_SPEED  = 45;
+const TYPING_SPEED = 90;
+const ERASING_SPEED = 45;
 const PAUSE_DURATION = 2200;
 const WORDS = ["Full-Stack Developer", "Software Engineer", "UI/UX Enthusiast"];
-const TECH_STACK = ["React", "Angular", "TypeScript", "Node.js", "ASP.NET", "Tailwind"];
+const TECH_STACK = ["C#", "React", "Angular", "TypeScript", "Node.js", "ASP.NET", "Tailwind"];
 
 const SOCIAL_LINKS = [
-  { icon: Github,    link: "https://github.com/abrham-asrat",                    label: "GitHub" },
-  { icon: Linkedin,  link: "https://www.linkedin.com/in/abrham-asrat-8862b8366", label: "LinkedIn" },
-  { icon: Mail,      link: "mailto:abrhamasrat29@gmail.com",                     label: "Email" },
-  { icon: Instagram, link: "https://www.instagram.com/abrham_asrat12",           label: "Instagram" },
+  { icon: Github, link: "https://github.com/abrham-asrat", label: "GitHub" },
+  { icon: Linkedin, link: "https://www.linkedin.com/in/abrham-asrat-8862b8366", label: "LinkedIn" },
+  { icon: Mail, link: "mailto:abrhamasrat29@gmail.com", label: "Email" },
+  { icon: Instagram, link: "https://www.instagram.com/abrham_asrat12", label: "Instagram" },
   {
     label: "Telegram",
     link: "https://t.me/abrham_asrat",
     icon: () => (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.14.141-.259.259-.374.261l.213-3.053 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.136-.954l11.57-4.458c.538-.196 1.006.128.832.941z" fill="#0088cc"/>
+        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.14.141-.259.259-.374.261l.213-3.053 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.136-.954l11.57-4.458c.538-.196 1.006.128.832.941z" fill="#0088cc" />
       </svg>
     ),
   },
@@ -81,11 +81,10 @@ const SocialBtn = memo(({ icon: Icon, link, label }) => (
 const CTABtn = memo(({ href, label, icon: Icon, primary, download }) => (
   <a href={href} download={download} target={download ? "_blank" : undefined} rel={download ? "noopener noreferrer" : undefined}>
     <button
-      className={`group relative flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-300 hover:scale-[1.03] active:scale-95 ${
-        primary
-          ? "text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40"
-          : "text-white/80 border border-white/10 bg-white/[0.05] hover:bg-white/[0.1] hover:border-white/20 hover:text-white"
-      }`}
+      className={`group relative flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-300 hover:scale-[1.03] active:scale-95 ${primary
+        ? "text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40"
+        : "text-white/80 border border-white/10 bg-white/[0.05] hover:bg-white/[0.1] hover:border-white/20 hover:text-white"
+        }`}
       style={primary ? { background: "linear-gradient(135deg,#6366f1,#a855f7)" } : {}}
     >
       {primary && <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-400/20 to-purple-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />}
@@ -113,7 +112,7 @@ const CodeWindow = memo(() => {
     { indent: 0, tokens: [{ t: "const ", c: "#a78bfa" }, { t: "developer", c: "#e2e8f0" }, { t: " = {", c: "#94a3b8" }] },
     { indent: 1, tokens: [{ t: "name: ", c: "#94a3b8" }, { t: '"Abrham Asrat"', c: "#86efac" }, { t: ",", c: "#94a3b8" }] },
     { indent: 1, tokens: [{ t: "role: ", c: "#94a3b8" }, { t: '"Full-Stack Dev"', c: "#86efac" }, { t: ",", c: "#94a3b8" }] },
-    { indent: 1, tokens: [{ t: "stack: ", c: "#94a3b8" }, { t: "[ React, Node, .NET ]", c: "#7dd3fc" }, { t: ",", c: "#94a3b8" }] },
+    { indent: 1, tokens: [{ t: "stack: ", c: "#94a3b8" }, { t: "[ .NET, React, Node]", c: "#7dd3fc" }, { t: ",", c: "#94a3b8" }] },
     { indent: 1, tokens: [{ t: "status: ", c: "#94a3b8" }, { t: '"open to work"', c: "#fde68a" }, { t: ",", c: "#94a3b8" }] },
     { indent: 0, tokens: [{ t: "};", c: "#94a3b8" }] },
     { indent: 0, tokens: [] },
@@ -164,13 +163,13 @@ const CodeWindow = memo(() => {
    MAIN COMPONENT
 ═══════════════════════════════════════════════════════ */
 const Home = () => {
-  const [text, setText]           = useState("");
-  const [isTyping, setIsTyping]   = useState(true);
+  const [text, setText] = useState("");
+  const [isTyping, setIsTyping] = useState(true);
   const [wordIndex, setWordIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
-  const [isLoaded, setIsLoaded]   = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [techStack, setTechStack] = useState(TECH_STACK);
-  const [particles]               = useState(() =>
+  const [particles] = useState(() =>
     Array.from({ length: 12 }, (_, i) => ({
       id: i,
       size: `${Math.random() * 3 + 2}px`,
@@ -249,7 +248,7 @@ const Home = () => {
 
       {/* ── page content ── */}
       <div className={`relative z-10 transition-all duration-1000 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 xl:px-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 xl:px-16 mb-24">
           <div className="flex flex-col lg:flex-row items-center justify-center lg:justify-between
                           min-h-[calc(100vh-64px)] gap-8 sm:gap-10 lg:gap-16
                           py-10 sm:py-14 lg:py-0">
@@ -285,9 +284,9 @@ const Home = () => {
               <p className="text-white/50 text-sm sm:text-base leading-relaxed max-w-lg"
                 data-aos="fade-up" data-aos-delay="550">
                 Full-Stack Developer specializing in{" "}
-                <span className="text-indigo-400 font-medium">MEAN</span>,{" "}
+                <span className="text-indigo-400 font-medium">ASP.NET</span>,{" "}
                 <span className="text-purple-400 font-medium">MERN</span>, and{" "}
-                <span className="text-cyan-400 font-medium">ASP.NET</span> stacks — design-first & accessible.
+                <span className="text-cyan-400 font-medium">MEAN</span> stacks — design-first & accessible.
               </p>
 
               {/* tech badges */}
@@ -299,19 +298,19 @@ const Home = () => {
               {/* stats row */}
               <div className="flex items-center gap-4 sm:gap-6 md:gap-8 py-4 sm:py-5 px-4 sm:px-6 rounded-2xl bg-white/[0.03] border border-white/[0.07] backdrop-blur-sm"
                 data-aos="fade-up" data-aos-delay="750">
-                <StatItem value="10+" label="Projects"   icon={Code2} color="linear-gradient(135deg,#6366f1,#818cf8)" />
+                <StatItem value="10+" label="Projects" icon={Code2} color="linear-gradient(135deg,#6366f1,#818cf8)" />
                 <div className="w-px h-7 sm:h-8 bg-white/10 flex-shrink-0" />
-                <StatItem value="2+"  label="Years Exp"  icon={Zap}   color="linear-gradient(135deg,#a855f7,#c084fc)" />
+                <StatItem value="2+" label="Years Exp" icon={Zap} color="linear-gradient(135deg,#a855f7,#c084fc)" />
                 <div className="w-px h-7 sm:h-8 bg-white/10 flex-shrink-0" />
-                <StatItem value="5+"  label="Tech Stack" icon={Star}  color="linear-gradient(135deg,#06b6d4,#67e8f9)" />
+                <StatItem value="5+" label="Tech Stack" icon={Star} color="linear-gradient(135deg,#06b6d4,#67e8f9)" />
               </div>
 
               {/* CTA buttons */}
               <div className="flex flex-wrap gap-2 sm:gap-3 justify-center lg:justify-start"
                 data-aos="fade-up" data-aos-delay="850">
-                <CTABtn href="#Portofolio"          label="View Projects" icon={ArrowRight} primary />
-                <CTABtn href="#Contact"             label="Contact Me"    icon={Mail} />
-                <CTABtn href="/Abrham_Asrat_CV.pdf" label="Download CV"   icon={Download} download />
+                <CTABtn href="#Portofolio" label="View Projects" icon={ArrowRight} primary />
+                <CTABtn href="#Contact" label="Contact Me" icon={Mail} />
+                <CTABtn href="/Abrham_Asrat_CV.pdf" label="Download CV" icon={Download} download />
               </div>
 
               {/* social links */}
