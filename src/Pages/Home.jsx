@@ -112,42 +112,12 @@ const CodeWindow = memo(() => {
     { indent: 0, tokens: [{ t: "const ", c: "#a78bfa" }, { t: "developer", c: "#e2e8f0" }, { t: " = {", c: "#94a3b8" }] },
     { indent: 1, tokens: [{ t: "name: ", c: "#94a3b8" }, { t: '"Abrham Asrat"', c: "#86efac" }, { t: ",", c: "#94a3b8" }] },
     { indent: 1, tokens: [{ t: "role: ", c: "#94a3b8" }, { t: '"Full-Stack Dev"', c: "#86efac" }, { t: ",", c: "#94a3b8" }] },
-    { indent: 1, tokens: [{ t: "stack: ", c: "#94a3b8" }, { t: "[ .NET, React, Node ]", c: "#7dd3fc" }, { t: ",", c: "#94a3b8" }] },
+    { indent: 1, tokens: [{ t: "stack: ", c: "#94a3b8" }, { t: "[ .NET, React, Node]", c: "#7dd3fc" }, { t: ",", c: "#94a3b8" }] },
     { indent: 1, tokens: [{ t: "status: ", c: "#94a3b8" }, { t: '"open to work"', c: "#fde68a" }, { t: ",", c: "#94a3b8" }] },
     { indent: 0, tokens: [{ t: "};", c: "#94a3b8" }] },
     { indent: 0, tokens: [] },
     { indent: 0, tokens: [{ t: "developer.", c: "#e2e8f0" }, { t: "build", c: "#60a5fa" }, { t: "(", c: "#94a3b8" }, { t: '"amazing"', c: "#86efac" }, { t: ");", c: "#94a3b8" }] },
   ];
-
-  const totalChars = lines.reduce(
-    (acc, line) => acc + line.tokens.reduce((tAcc, tok) => tAcc + tok.t.length, 0),
-    0
-  );
-
-  const [charCount, setCharCount] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  useEffect(() => {
-    let timer;
-    if (!isDeleting) {
-      if (charCount < totalChars) {
-        timer = setTimeout(() => setCharCount((prev) => prev + 1), 35);
-      } else {
-        timer = setTimeout(() => setIsDeleting(true), 4000);
-      }
-    } else {
-      if (charCount > 0) {
-        timer = setTimeout(() => setCharCount((prev) => prev - 1), 18);
-      } else {
-        timer = setTimeout(() => setIsDeleting(false), 600);
-      }
-    }
-    return () => clearTimeout(timer);
-  }, [charCount, isDeleting, totalChars]);
-
-  let remaining = charCount;
-  let cursorPlaced = false;
-
   return (
     <div className="relative w-full max-w-sm sm:max-w-md mx-auto mt-6 sm:mt-0" data-aos="fade-up" data-aos-delay="400">
       <div className="absolute -inset-3 bg-gradient-to-br from-indigo-600/20 to-purple-600/20 rounded-3xl blur-2xl" />
@@ -160,51 +130,15 @@ const CodeWindow = memo(() => {
           <span className="ml-2 text-white/30 text-[11px] font-mono">portfolio.ts</span>
         </div>
         {/* code */}
-        <div className="p-4 sm:p-5 font-mono text-[11px] sm:text-[13px] leading-6 sm:leading-7 select-none overflow-x-auto min-h-[220px]">
-          {lines.map((line, li) => {
-            const lineTokens = [];
-            let lineHasCursor = false;
-
-            for (let tok of line.tokens) {
-              if (remaining <= 0) {
-                if (!cursorPlaced) {
-                  lineHasCursor = true;
-                  cursorPlaced = true;
-                }
-                break;
-              }
-
-              const take = Math.min(remaining, tok.t.length);
-              const textChunk = tok.t.slice(0, take);
-              remaining -= take;
-
-              lineTokens.push(
-                <span key={lineTokens.length} style={{ color: tok.c }}>
-                  {textChunk}
-                </span>
-              );
-
-              if (remaining === 0 && !cursorPlaced) {
-                lineHasCursor = true;
-                cursorPlaced = true;
-              }
-            }
-
-            if (line.tokens.length === 0 && remaining <= 0 && !cursorPlaced) {
-              lineHasCursor = true;
-              cursorPlaced = true;
-            }
-
-            return (
-              <div key={li} className="flex min-h-[1.5rem]" style={{ paddingLeft: `${line.indent * 14}px` }}>
-                <span className="w-5 text-white/20 text-[10px] mr-2 sm:mr-3 select-none flex-shrink-0">{li + 1}</span>
-                <span className="whitespace-nowrap">
-                  {lineTokens}
-                  {lineHasCursor && <Cursor />}
-                </span>
-              </div>
-            );
-          })}
+        <div className="p-4 sm:p-5 font-mono text-[11px] sm:text-[13px] leading-6 sm:leading-7 select-none overflow-x-auto">
+          {lines.map((line, li) => (
+            <div key={li} className="flex" style={{ paddingLeft: `${line.indent * 14}px` }}>
+              <span className="w-5 text-white/20 text-[10px] mr-2 sm:mr-3 select-none flex-shrink-0">{li + 1}</span>
+              <span className="whitespace-nowrap">
+                {line.tokens.map((tok, ti) => <span key={ti} style={{ color: tok.c }}>{tok.t}</span>)}
+              </span>
+            </div>
+          ))}
         </div>
         {/* status bar */}
         <div className="flex items-center justify-between px-4 py-1.5 border-t border-white/[0.05] bg-indigo-500/5">
