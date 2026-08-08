@@ -18,7 +18,9 @@ const ContactPage = () => {
 
   useEffect(() => {
     AOS.init({
-      once: false,
+      once: true,
+      duration: 600,
+      easing: "ease-out-cubic",
     });
   }, []);
 

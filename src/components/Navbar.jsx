@@ -75,7 +75,7 @@ const Navbar = () => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
     }
   }, [isOpen]);
 
@@ -183,12 +183,11 @@ const Navbar = () => {
 
       {/* Mobile Menu Overlay */}
       <div
-        className={`md:hidden h-2/5 fixed inset-0 bg-[#030014] transition-all duration-300 ease-in-out ${
+        className={`md:hidden fixed top-16 left-0 right-0 bg-[#030014]/95 backdrop-blur-2xl border-b border-white/10 transition-all duration-300 ease-in-out z-40 ${
           isOpen
-            ? "opacity-100 translate-y-0"
-            : "opacity-0 translate-y-[-100%] pointer-events-none"
+            ? "opacity-100 translate-y-0 pointer-events-auto"
+            : "opacity-0 -translate-y-full pointer-events-none"
         }`}
-        style={{ top: "64px" }}
       >
         <div className="flex flex-col h-full">
           <div className="px-4 py-6 space-y-4 flex-1 ">

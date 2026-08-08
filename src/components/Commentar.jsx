@@ -210,8 +210,9 @@ const Komentar = () => {
   useEffect(() => {
     // Initialize AOS
     AOS.init({
-      once: false,
-      duration: 1000,
+      once: true,
+      duration: 600,
+      easing: "ease-out-cubic",
     });
   }, []);
 

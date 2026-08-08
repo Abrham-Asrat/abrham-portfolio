@@ -32,6 +32,7 @@ const AnimatedBackground = () => {
           currentScroll = newScroll;
 
           blobRefs.current.forEach((blob, index) => {
+            if (!blob) return;
             const initialPos = initialPositions[index];
 
             // Calculating movement in both X and Y direction
@@ -41,9 +42,8 @@ const AnimatedBackground = () => {
             const x = initialPos.x + xOffset;
             const y = initialPos.y + yOffset;
 
-            // Apply transformation with smooth transition
-            blob.style.transform = `translate(${x}px, ${y}px)`;
-            blob.style.transition = "transform 1.4s ease-out";
+            // Apply transformation smoothly without resetting transition style in loop
+            blob.style.transform = `translate3d(${x}px, ${y}px, 0)`;
           });
 
           ticking = false;
@@ -60,7 +60,7 @@ const AnimatedBackground = () => {
   }, []);
 
   return (
-    <div className="fixed inset-0 overflow-hidden">
+    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
       {/* Stars background */}
       <div className="absolute inset-0 bg-black">
         {/* Static stars */}
@@ -91,15 +91,15 @@ const AnimatedBackground = () => {
         {/* Nebula blobs */}
         <div
           ref={(ref) => (blobRefs.current[0] = ref)}
-          className="absolute top-0 -left-4 md:w-96 md:h-96 w-72 h-72 bg-purple-500 rounded-full filter blur-[128px] opacity-10"
+          className="absolute top-0 -left-4 md:w-96 md:h-96 w-72 h-72 bg-purple-500 rounded-full filter blur-[128px] opacity-10 transition-transform duration-700 ease-out will-change-transform"
         ></div>
         <div
           ref={(ref) => (blobRefs.current[1] = ref)}
-          className="absolute top-0 -right-4 w-96 h-96 bg-blue-500 rounded-full filter blur-[128px] opacity-10"
+          className="absolute top-0 -right-4 w-96 h-96 bg-blue-500 rounded-full filter blur-[128px] opacity-10 transition-transform duration-700 ease-out will-change-transform"
         ></div>
         <div
           ref={(ref) => (blobRefs.current[2] = ref)}
-          className="absolute -bottom-8 left-20 w-96 h-96 bg-pink-500 rounded-full filter blur-[128px] opacity-10"
+          className="absolute -bottom-8 left-20 w-96 h-96 bg-pink-500 rounded-full filter blur-[128px] opacity-10 transition-transform duration-700 ease-out will-change-transform"
         ></div>
       </div>
     </div>

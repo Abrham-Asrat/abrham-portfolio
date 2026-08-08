@@ -195,7 +195,9 @@ export default function FullWidthTabs() {
   useEffect(() => {
     // Initialize AOS once
     AOS.init({
-      once: false, // This will make animations occur only once
+      once: true,
+      duration: 600,
+      easing: "ease-out-cubic",
     });
   }, []);
 

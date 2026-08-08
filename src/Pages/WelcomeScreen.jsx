@@ -32,40 +32,43 @@ const WelcomeScreen = ({ onLoadingComplete }) => {
 
   const welcomeTexts = ["Innovator", "Developer", "Creator", "Problem Solver"];
 
+  const handleFinish = () => {
+    setIsLoading(false);
+    onLoadingComplete?.();
+  };
+
   useEffect(() => {
+    // Fast initial transition instead of 4.8s delay
     const timer = setTimeout(() => {
-      setIsLoading(false);
-      setTimeout(() => {
-        onLoadingComplete?.();
-      }, 800);
-    }, 4000);
+      handleFinish();
+    }, 1200);
 
     // Rotate through welcome texts
     const textTimer = setInterval(() => {
       setCurrentText((prev) => (prev + 1) % welcomeTexts.length);
-    }, 800);
+    }, 400);
 
     return () => {
       clearTimeout(timer);
       clearInterval(textTimer);
     };
-  }, [onLoadingComplete, welcomeTexts.length]);
+  }, []);
 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        duration: 0.8,
+        duration: 0.4,
         when: "beforeChildren",
-        staggerChildren: 0.3,
+        staggerChildren: 0.15,
       },
     },
     exit: {
       opacity: 0,
-      scale: 0.8,
+      scale: 0.95,
       transition: {
-        duration: 0.5,
+        duration: 0.3,
         ease: "easeInOut",
       },
     },
@@ -76,7 +79,7 @@ const WelcomeScreen = ({ onLoadingComplete }) => {
     visible: {
       y: 0,
       opacity: 1,
-      transition: { duration: 0.5 },
+      transition: { duration: 0.3 },
     },
   };
 
@@ -84,7 +87,7 @@ const WelcomeScreen = ({ onLoadingComplete }) => {
     <AnimatePresence>
       {isLoading && (
         <motion.div
-          className="fixed inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center overflow-hidden px-4 py-6"
+          className="fixed inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center overflow-hidden px-4 py-6 z-50"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -152,20 +155,24 @@ const WelcomeScreen = ({ onLoadingComplete }) => {
             >
               <button
                 className="px-8 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-full font-medium hover:from-cyan-500 hover:to-blue-500 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-cyan-500/20"
-                onClick={() => setIsLoading(false)}
+                onClick={handleFinish}
               >
                 Enter Portfolio
               </button>
 
               <div className="flex gap-4">
                 <a
-                  href="#"
+                  href="https://github.com/abrham-asrat"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="p-3 rounded-full bg-gray-800/50 border border-gray-700 hover:bg-gray-700/50 transition-all duration-300 hover:scale-110"
                 >
                   <Github className="w-5 h-5 text-gray-300" />
                 </a>
                 <a
-                  href="#"
+                  href="https://www.linkedin.com/in/abrham-asrat-8862b8366"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="p-3 rounded-full bg-gray-800/50 border border-gray-700 hover:bg-gray-700/50 transition-all duration-300 hover:scale-110"
                 >
                   <User className="w-5 h-5 text-gray-300" />
@@ -183,7 +190,7 @@ const WelcomeScreen = ({ onLoadingComplete }) => {
                   className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full"
                   initial={{ width: "0%" }}
                   animate={{ width: "100%" }}
-                  transition={{ duration: 3.5, ease: "easeOut" }}
+                  transition={{ duration: 1.0, ease: "easeOut" }}
                 />
               </div>
               <p className="text-xs text-gray-500 mt-2">
