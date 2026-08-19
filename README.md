@@ -1,7 +1,3 @@
-Perfect! Here's a professional README.md for your updated portfolio. It's clean, well-structured, and shows employers you care about documentation.
-
----
-
 ```markdown
 # Abrham Asrat — Full-Stack Web Developer Portfolio
 
