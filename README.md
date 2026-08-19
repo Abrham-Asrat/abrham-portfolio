@@ -1,3 +1,5 @@
+Here is the README as a plain Markdown code block. Just click the copy button in the top-right corner of the code block and paste it directly into your README.md file.
+
 ```markdown
 # Abrham Asrat — Full-Stack Web Developer Portfolio
 
@@ -15,7 +17,6 @@ Welcome to my personal portfolio website. I'm Abrham Asrat, a full-stack web dev
 - Project showcase with live demos and GitHub links
 - Clean, modern UI with professional typography
 - Fast loading and performance optimized
-- Dark/light theme (if applicable)
 
 ## 🛠️ Tech Stack
 
@@ -142,17 +143,3 @@ This project is open source and available under the MIT License.
 Built with ❤️ by Abrham Asrat
 
 ```
-
----
-
-## ✅ What this README does
-
-- Shows you're **professional and organized**
-- Makes it easy for employers to run your project
-- Documents Firebase setup properly
-- Clean structure with emojis and tables for readability
-- Includes contact info and license
-
----
-
-Would you like me to also write a **project description** for each of your projects to put on your portfolio website?
