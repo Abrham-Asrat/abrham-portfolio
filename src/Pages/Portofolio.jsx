@@ -186,13 +186,22 @@ const sampleCertificates = [
     Img: "/degree.jpg",
     Title: "BSC.s in Software Engineering",
     Issuer: "Arbaminch University",
-    Date: "2026",
+    Date: "Jun 25, 2026",
+    Link: "https://smis.amu.edu.et/pages/check_graduate/NSR-033-14",
   },
   {
-    Img: "/microsoft.jpg",
-    Title: "BSC.s in Software Engineering",
-    Issuer: "Arbaminch University",
-    Date: "2026",
+    Img: "/microsoft.png",
+    Title: "Foundational C# with Microsoft",
+    Issuer: "freeCodeCamp",
+    Date: "April 5, 2026",
+    Link: "https://www.freecodecamp.org/certification/fcc-75e640ae-7704-4b38-a228-d50d54e5afd7/foundational-c-sharp-with-microsoft",
+  },
+  {
+    Img: "/IBM.png",
+    Title: "AI Literacy",
+    Issuer: "IBM",
+    Date: "June 21, 2026",
+    Link: "https://www.credly.com/badges/9a38ef5d-8f07-40c0-a2a0-8219d30c052e",
   },
 ];
 
@@ -453,7 +462,13 @@ export default function FullWidthTabs() {
                   }
                   data-aos-duration="800"
                 >
-                  <Certificate ImgSertif={certificate.Img} />
+                  <Certificate
+                    ImgSertif={certificate.Img}
+                    Title={certificate.Title}
+                    Issuer={certificate.Issuer}
+                    Date={certificate.Date}
+                    Link={certificate.Link}
+                  />
                 </div>
               ))}
             </div>

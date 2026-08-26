@@ -13,7 +13,7 @@ const Navbar = () => {
     { href: "#Portofolio", label: "Portofolio" },
     { href: "#Contact", label: "Contact" },
     {
-      href: "/Abrham_Asrat_CV.pdf",
+      href: "/Abrham_Asrat_FullStack_Developer_Resume.pdf",
       label: "Download CV",
       external: true,
       variant: "button",

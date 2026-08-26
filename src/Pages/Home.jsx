@@ -310,7 +310,7 @@ const Home = () => {
                 data-aos="fade-up" data-aos-delay="850">
                 <CTABtn href="#Portofolio" label="View Projects" icon={ArrowRight} primary />
                 <CTABtn href="#Contact" label="Contact Me" icon={Mail} />
-                <CTABtn href="/Abrham_Asrat_CV.pdf" label="Download CV" icon={Download} download />
+                <CTABtn href="/Abrham_Asrat_FullStack_Developer_Resume.pdf" label="Download CV" icon={Download} download />
               </div>
 
               {/* social links */}

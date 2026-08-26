@@ -10,8 +10,9 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
+import { ExternalLink } from "lucide-react";
 
-const Certificate = ({ ImgSertif }) => {
+const Certificate = ({ ImgSertif, Title, Issuer, Date, Link }) => {
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => {
@@ -132,6 +133,32 @@ const Certificate = ({ ImgSertif }) => {
           </Box>
         </Box>
       </Box>
+
+      {(Title || Issuer || Date || Link) && (
+        <Box sx={{ pt: 2, color: "white" }}>
+          {Title && (
+            <Typography variant="subtitle1" component="h3" sx={{ fontWeight: 700 }}>
+              {Title}
+            </Typography>
+          )}
+          {(Issuer || Date) && (
+            <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)", mt: 0.5 }}>
+              {[Issuer, Date].filter(Boolean).join(" · ")}
+            </Typography>
+          )}
+          {Link && (
+            <a
+              href={Link}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-indigo-300 transition-colors hover:text-white"
+            >
+              Verify certificate
+              <ExternalLink className="h-4 w-4" aria-hidden="true" />
+            </a>
+          )}
+        </Box>
+      )}
 
       {/* Modal */}
       <Modal
