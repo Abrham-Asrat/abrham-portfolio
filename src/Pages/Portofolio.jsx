@@ -137,7 +137,7 @@ const sampleProjects = [
   {
     id: "1",
     Img: "/medconnect.png",
-    Title: "Med-Connect — Digital Healthcare Platform",
+    Title: "Med-Connect — Digital Healthcare",
     Description:
       "Med-Connect is a full-stack healthcare platform designed to connect patients with verified medical professionals through a secure, scalable system. The platform digitizes appointment scheduling, patient records, and doctor-patient communication, reducing manual administrative work in clinical workflows by an estimated 50%. It features real-time telemedicine, secure patient record management, and peer-reviewed medical insights. Engineered for performance and scalability, Med-Connect supports 10,000+ requests efficiently, making it suitable for real-world healthcare use.",
     Link: "https://med-connect-opal-eight.vercel.app/",
