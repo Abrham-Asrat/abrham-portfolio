@@ -1,113 +1,44 @@
-# Portfolio V5
+# Abrham Asrat — Full-Stack Web Developer Portfolio
 
-Hello everyone!
-Let me introduce myself, I’m Eki Zulfar Rachman. On this occasion, I’d like to share the portfolio website project that I’ve developed.
+Welcome to my personal portfolio website. I'm Abrham Asrat, a full-stack web developer based in Addis Ababa, Ethiopia. I build modern, scalable web applications using React, Node.js, ASP.NET Core, and other modern technologies.
 
-**Tech Stack used:**
+## 🚀 Live Demo
 
-- ReactJS
-- Tailwind CSS
-- AOS
-- Firebase
-- Framer Motion
-- Lucide
-- Material UI
-- SweetAlert2
+🔗 **Website:** [abrham-portfolio-ab.vercel.app](https://abrham-portfolio-ab.vercel.app/)
 
-**Website Link:**
-https://abrham-portfolio-ab.vercel.app/
+## ✨ Features
 
-We would appreciate it if you decide to use this project. Please include credit when using it. Thank you! 🙏
+- **Responsive Design:** Works seamlessly on desktop, tablet, and mobile devices.
+- **Smooth Animations:** Integrated transitions and scroll animations for a dynamic feel.
+- **Contact Form:** Integrated with Firebase Firestore for direct message delivery.
+- **Project Showcase:** Highlights key projects with live demos and GitHub source links.
+- **Modern UI:** Built with clean, professional typography and component architecture.
+- **Performance Optimized:** Fast load times powered by Vite.
 
----
+## 🛠️ Tech Stack
 
-# Tutorial: Running the Project
+| Category | Technologies |
+| :--- | :--- |
+| **Frontend** | React.js, Tailwind CSS, Material UI |
+| **Animations** | Framer Motion, AOS (Animate On Scroll) |
+| **Icons** | Lucide React |
+| **Backend & DB** | Firebase (Firestore) |
+| **Notifications** | SweetAlert2 |
+| **Deployment** | Vercel |
+| **Build Tool** | Vite |
 
-Here’s a simple guide to run this project.
+## 📂 Project Structure
 
-## Prerequisites
-
-Ensure that you have already installed:
-
-- **Node.js**
-
----
-
-## Steps to Run the Project
-
-1. **Download this project:**
-
-   ```bash
-   git clone https://github.com/EkiZR/Portofolio_V5.git  
-   ```
-2. **Install all dependencies:**
-
-   ```bash
-   npm install  
-   ```
-
-   Or use:
-
-   ```bash
-   npm install --legacy-peer-deps  
-   ```
-3. **Run the project:**
-
-   ```bash
-   npm run dev  
-   ```
-4. **Open in browser:**
-
-   Access the application through the link displayed in your terminal.
-
----
-
-## Creating a Production Build
-
-To create a production-ready build:
-
-1. Run the build command:
-
-   ```bash
-   npm run build  
-   ```
-2. The build files will be saved in the `dist` folder. You can upload this folder to your hosting server.
-
----
-
-## Notes
-
-If you encounter issues while running the project, ensure that:
-
-- Node.js is correctly installed.
-- You’re in the correct project directory.
-- All dependencies are installed without errors.
-
----
-
-## Firebase Configuration
-
-To configure Firebase for this project, follow these steps:
-
-1. **Add Firebase to the Project:**
-
-   - Go to the [Firebase Console](https://console.firebase.google.com/).
-   - Create a new project or use an existing one.
-2. **Enable Firestore Database:**
-
-   - Create a database.
-3. **Go to Project Settings:**
-
-   - Click the settings icon.
-   - Copy the Firebase configuration.
-4. **Go to Rules:**
-
-   - Set the rules to `true`.
-5. **Adjust the Collection Structure:**
-
-   - Set up the collections as shown in the following images:
-
-   ![Collection Structure Example 1](https://github.com/user-attachments/assets/38580122-08a4-4499-a8fd-0f253652a239)![Collection Structure Example 2](https://github.com/user-attachments/assets/d563d7ad-f1ab-46ff-8185-640dcebd0363)
-6. **Update `firebase.js` and `firebase-comment.js` Files:**
-
-   - Replace the `firebaseConfig` content with your Firebase configuration.
+```text
+portfolio/
+├── public/              # Static assets
+├── src/
+│   ├── components/      # Reusable UI components
+│   ├── sections/        # Page sections (Hero, Projects, Contact, etc.)
+│   ├── data/            # Project data and content
+│   ├── firebase/        # Firebase configuration
+│   ├── App.jsx          # Main app component
+│   └── main.jsx         # Entry point
+├── index.html
+├── package.json
+└── README.md
