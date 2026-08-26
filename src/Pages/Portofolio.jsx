@@ -136,6 +136,15 @@ const initialTechStacks = [
 const sampleProjects = [
   {
     id: "1",
+    Img: "/medconnect.png",
+    Title: "Med-Connect — Digital Healthcare Platform",
+    Description:
+      "Med-Connect is a full-stack healthcare platform designed to connect patients with verified medical professionals through a secure, scalable system. The platform digitizes appointment scheduling, patient records, and doctor-patient communication, reducing manual administrative work in clinical workflows by an estimated 50%. It features real-time telemedicine, secure patient record management, and peer-reviewed medical insights. Engineered for performance and scalability, Med-Connect supports 10,000+ requests efficiently, making it suitable for real-world healthcare use.",
+    Link: "https://med-connect-opal-eight.vercel.app/",
+    TechStack: ["Angular", "ASP.NET Core", "SQL Server", "Socket.io", "TypeScript"],
+},
+  {
+    id: "2",
     Img: "/tour.png",
     Title: "Tour Guider",
     Description:
@@ -144,7 +153,7 @@ const sampleProjects = [
     TechStack: ["React", "Node.js", "MongoDB", "Express"],
   },
   {
-    id: "2",
+    id: "3",
     Img: "/doctor.png",
     Title: "Health care website",
     Description:
@@ -153,7 +162,7 @@ const sampleProjects = [
     TechStack: ["ASP.NET Core", "SQL Server", "Angular", "Entity Framework"],
   },
   {
-    id: "3",
+    id: "4",
     Img: "/bank.png",
     Title: "Bank Information Giver",
     Description:
@@ -162,7 +171,7 @@ const sampleProjects = [
     TechStack: ["React", "Firebase", "Express"],
   },
   {
-    id: "4",
+    id: "5",
     Img: "/food.png",
     Title: "Food Recipe",
     Description:
