@@ -182,12 +182,18 @@ const sampleProjects = [
 ];
 
 const sampleCertificates = [
-  // {
-  //   Img: "/Meta.png",
-  //   Title: "Full-Stack Web Development",
-  //   Issuer: "Coursera",
-  //   Date: "2023",
-  // },
+  {
+    Img: "/degree.jpg",
+    Title: "BSC.s in Software Engineering",
+    Issuer: "Arbaminch University",
+    Date: "2026",
+  },
+  {
+    Img: "/microsoft.jpg",
+    Title: "BSC.s in Software Engineering",
+    Issuer: "Arbaminch University",
+    Date: "2026",
+  },
 ];
 
 export default function FullWidthTabs() {
