@@ -1,8 +1,9 @@
-import React from "react";
+
+import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { ExternalLink, ArrowRight } from "lucide-react";
 
-const CardProject = ({ Img, Title, Description, Link: ProjectLink, id }) => {
+const CardProject = ({ Img, Title, Description, Link: ProjectLink, Date, id }) => {
   // Handle kasus ketika ProjectLink kosong
   const handleLiveDemo = (e) => {
     if (!ProjectLink) {
@@ -32,6 +33,7 @@ const CardProject = ({ Img, Title, Description, Link: ProjectLink, id }) => {
 
           <div className="mt-4 space-y-3">
             <h3 className="text-xl font-semibold text-white group-hover:animate-glow transition-all duration-300">{Title}</h3>
+            {Date && <p className="text-xs text-indigo-300/80">{Date}</p>}
 
             <p className="text-gray-400 text-sm leading-relaxed line-clamp-2 group-hover:text-gray-300 transition-colors">
               {Description}
@@ -75,6 +77,15 @@ const CardProject = ({ Img, Title, Description, Link: ProjectLink, id }) => {
       </div>
     </div>
   );
+};
+
+CardProject.propTypes = {
+  Img: PropTypes.string.isRequired,
+  Title: PropTypes.string.isRequired,
+  Description: PropTypes.string.isRequired,
+  Link: PropTypes.string,
+  Date: PropTypes.string,
+  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
 export default CardProject;

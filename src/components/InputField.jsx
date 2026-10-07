@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import PropTypes from "prop-types";
 
 const InputField = ({ field, label, icon: Icon, formData, handleChange }) => {
   const [isFocused, setIsFocused] = useState(false);
@@ -83,6 +84,14 @@ const InputField = ({ field, label, icon: Icon, formData, handleChange }) => {
       ></div>
     </div>
   );
+};
+
+InputField.propTypes = {
+  field: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  icon: PropTypes.elementType.isRequired,
+  formData: PropTypes.objectOf(PropTypes.string).isRequired,
+  handleChange: PropTypes.func.isRequired,
 };
 
 export default InputField;

@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
@@ -42,6 +43,7 @@ const TechBadge = ({ tech }) => {
     </div>
   );
 };
+TechBadge.propTypes = { tech: PropTypes.string.isRequired };
 
 const FeatureItem = ({ feature }) => {
   return (
@@ -56,6 +58,7 @@ const FeatureItem = ({ feature }) => {
     </li>
   );
 };
+FeatureItem.propTypes = { feature: PropTypes.string.isRequired };
 
 const ProjectStats = ({ project }) => {
   const techStackCount = project?.TechStack?.length || 0;
@@ -77,7 +80,7 @@ const ProjectStats = ({ project }) => {
             {techStackCount}
           </div>
           <div className="text-[10px] md:text-xs text-gray-400">
-            Total Teknologi
+            Total Technologies
           </div>
         </div>
       </div>
@@ -94,12 +97,18 @@ const ProjectStats = ({ project }) => {
             {featuresCount}
           </div>
           <div className="text-[10px] md:text-xs text-gray-400">
-            Fitur Utama
+            Main Features
           </div>
         </div>
       </div>
     </div>
   );
+};
+ProjectStats.propTypes = {
+  project: PropTypes.shape({
+    TechStack: PropTypes.arrayOf(PropTypes.string),
+    Features: PropTypes.arrayOf(PropTypes.string),
+  }).isRequired,
 };
 
 const handleGithubClick = (githubLink) => {
@@ -122,11 +131,21 @@ const ProjectDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [project, setProject] = useState(null);
-  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [projectNotFound, setProjectNotFound] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const storedProjects = JSON.parse(localStorage.getItem("projects")) || [];
+    setProject(null);
+    setProjectNotFound(false);
+    let storedProjects = [];
+
+    try {
+      const parsedProjects = JSON.parse(localStorage.getItem("projects") || "[]");
+      storedProjects = Array.isArray(parsedProjects) ? parsedProjects : [];
+    } catch (error) {
+      console.error("Unable to read stored projects:", error);
+    }
+
     const selectedProject = storedProjects.find((p) => String(p.id) === id);
 
     if (selectedProject) {
@@ -134,9 +153,11 @@ const ProjectDetails = () => {
         ...selectedProject,
         Features: selectedProject.Features || [],
         TechStack: selectedProject.TechStack || [],
-        Github: selectedProject.Github || "https://github.com/EkiZR",
+        Github: selectedProject.Github || "https://github.com/abrham-asrat",
       };
       setProject(enhancedProject);
+    } else {
+      setProjectNotFound(true);
     }
   }, [id]);
 
@@ -144,10 +165,18 @@ const ProjectDetails = () => {
     return (
       <div className="min-h-screen bg-[#030014] flex items-center justify-center">
         <div className="text-center space-y-6 animate-fadeIn">
-          <div className="w-16 h-16 md:w-24 md:h-24 mx-auto border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
           <h2 className="text-xl md:text-3xl font-bold text-white">
-            Loading Project...
+            {projectNotFound ? "Project Not Found" : "Loading Project..."}
           </h2>
+          {projectNotFound && (
+            <button
+              type="button"
+              onClick={() => navigate("/")}
+              className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-500"
+            >
+              Back to Portfolio
+            </button>
+          )}
         </div>
       </div>
     );
@@ -256,7 +285,6 @@ const ProjectDetails = () => {
                   src={project.Img}
                   alt={project.Title}
                   className="w-full  object-cover transform transition-transform duration-700 group-hover:scale-105"
-                  onLoad={() => setIsImageLoaded(true)}
                 />
                 <div className="absolute inset-0 border-2 border-white/0 group-hover:border-white/10 transition-colors duration-300 rounded-2xl" />
               </div>
@@ -282,7 +310,7 @@ const ProjectDetails = () => {
         </div>
       </div>
 
-      <style jsx="true">{`
+      <style>{`
         @keyframes blob {
           0% {
             transform: translate(0px, 0px) scale(1);

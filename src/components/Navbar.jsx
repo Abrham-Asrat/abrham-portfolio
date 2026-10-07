@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
+
+const navItems = [
+  { href: "#Home", label: "Home" },
+  { href: "#About", label: "About" },
+  { href: "#Portofolio", label: "Portofolio" },
+  { href: "#Contact", label: "Contact" },
+  {
+    href: "/Abrham_Asrat_Resume_2026.pdf",
+    label: "Download CV",
+    external: true,
+    variant: "button",
+  },
+];
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("Home");
-
-  const navItems = [
-    { href: "#Home", label: "Home" },
-    { href: "#About", label: "About" },
-    { href: "#Portofolio", label: "Portofolio" },
-    { href: "#Contact", label: "Contact" },
-    {
-      href: "/Abrham_Asrat_FullStack_Developer_Resume.pdf",
-      label: "Download CV",
-      external: true,
-      variant: "button",
-    },
-  ];
 
   useEffect(() => {
     let rafId;

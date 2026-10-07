@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef, useCallback, memo } from "react";
+import { useState, useEffect, useRef, useCallback, memo } from "react";
+import PropTypes from "prop-types";
 import {
-  getDocs,
   addDoc,
   collection,
   onSnapshot,
@@ -22,7 +22,7 @@ import {
 import AOS from "aos";
 import "aos/dist/aos.css";
 
-const Comment = memo(({ comment, formatDate, index }) => (
+const Comment = memo(({ comment, formatDate }) => (
   <div className="px-4 pt-4 pb-2 rounded-xl bg-[#030014]/5 border border-white/10 hover:bg-[#030014]/10 transition-all group hover:shadow-lg hover:-translate-y-0.5">
     <div className="flex items-start gap-3 ">
       {comment.profileImage ? (
@@ -53,8 +53,18 @@ const Comment = memo(({ comment, formatDate, index }) => (
     </div>
   </div>
 ));
+Comment.displayName = "Comment";
+Comment.propTypes = {
+  comment: PropTypes.shape({
+    profileImage: PropTypes.string,
+    userName: PropTypes.string.isRequired,
+    createdAt: PropTypes.any,
+    content: PropTypes.string.isRequired,
+  }).isRequired,
+  formatDate: PropTypes.func.isRequired,
+};
 
-const CommentForm = memo(({ onSubmit, isSubmitting, error }) => {
+const CommentForm = memo(({ onSubmit, isSubmitting }) => {
   const [newComment, setNewComment] = useState("");
   const [userName, setUserName] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
@@ -201,6 +211,11 @@ const CommentForm = memo(({ onSubmit, isSubmitting, error }) => {
     </form>
   );
 });
+CommentForm.displayName = "CommentForm";
+CommentForm.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+  isSubmitting: PropTypes.bool.isRequired,
+};
 
 const Komentar = () => {
   const [comments, setComments] = useState([]);
@@ -324,7 +339,6 @@ const Komentar = () => {
           <CommentForm
             onSubmit={handleCommentSubmit}
             isSubmitting={isSubmitting}
-            error={error}
           />
         </div>
 
@@ -341,18 +355,17 @@ const Komentar = () => {
               </p>
             </div>
           ) : (
-            comments.map((comment, index) => (
+            comments.map((comment) => (
               <Comment
                 key={comment.id}
                 comment={comment}
                 formatDate={formatDate}
-                index={index}
               />
             ))
           )}
         </div>
       </div>
-      <style jsx="true">{`
+      <style>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 6px;
         }

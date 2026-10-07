@@ -106,28 +106,35 @@ CustomTabPanel.propTypes = {
 };
 
 const initialTechStacks = [
-  { icon: "html.svg", language: "HTML" },
-  { icon: "css.svg", language: "CSS" },
   { icon: "javascript.svg", language: "JavaScript" },
   { icon: "typescript.svg", language: "TypeScript" },
+  { icon: "csharp.svg", language: "C#" },
+  { icon: "sql.svg", language: "SQL" },
   { icon: "angular.svg", language: "Angular" },
   { icon: "reactjs.svg", language: "React" },
-  { icon: "nodejs.svg", language: "Node.js" },
-  { icon: "microsoft-sql.svg", language: "Microsoft SQL" },
-  { icon: "mysql.svg", language: "MySQL" },
-  { icon: "sql.svg", language: "SQL" },
-  { icon: "bootstrap.svg", language: "Bootstrap" },
   { icon: "tailwind.svg", language: "Tailwind CSS" },
-  { icon: "vercel.svg", language: "Vercel" },
-  { icon: "csharp.svg", language: "C#" },
-  { icon: "cpp.svg", language: "C++" },
-  { icon: "java.svg", language: "Java" },
-  { icon: "sass.svg", language: "Sass/SCSS" },
-  { icon: "aspnet.svg", language: "ASP.NET" },
-  { icon: "entity-framework.svg", language: "Entity Framework" },
-  { icon: "rest-api.svg", language: "REST API" },
+  { icon: "bootstrap.svg", language: "Bootstrap" },
+  { icon: "MUI.svg", language: "Material UI" },
+  { icon: "framer-motion.svg", language: "Framer Motion" },
+  { icon: "aspnet.svg", language: "ASP.NET Core" },
+  { icon: "nodejs.svg", language: "Node.js" },
+  { icon: "nodejs.svg", language: "Express" },
+  { icon: "rest-api.svg", language: "RESTful APIs" },
+  { icon: "socket-io.svg", language: "Socket.io" },
+  { icon: "microsoft-sql.svg", language: "Microsoft SQL" },
+  { icon: "postgresql.svg", language: "PostgreSQL" },
+  { icon: "mysql.svg", language: "MySQL" },
+  { icon: "mongodb.svg", language: "MongoDB" },
+  { icon: "firebase.svg", language: "Firebase" },
+  { icon: "supabase.svg", language: "Supabase" },
+  { icon: "docker.svg", language: "Docker" },
   { icon: "git.svg", language: "Git" },
   { icon: "github.svg", language: "GitHub" },
+  { icon: "netlify.svg", language: "Netlify" },
+  { icon: "vercel.svg", language: "Vercel" },
+  { icon: "cicd.svg", language: "CI/CD" },
+  { icon: "jest.svg", language: "Jest" },
+  { icon: "vitest.svg", language: "Vitest" },
 ];
 
 const sampleProjects = [
@@ -138,66 +145,70 @@ const sampleProjects = [
     Description:
       "Med-Connect is a full-stack healthcare platform designed to connect patients with verified medical professionals through a secure, scalable system. The platform digitizes appointment scheduling, patient records, and doctor-patient communication, reducing manual administrative work in clinical workflows by an estimated 50%. It features real-time telemedicine, secure patient record management, and peer-reviewed medical insights. Engineered for performance and scalability, Med-Connect supports 10,000+ requests efficiently, making it suitable for real-world healthcare use.",
     Link: "https://med-connect-opal-eight.vercel.app/",
+    Date: "Jan 2026 – Jun 2026",
     TechStack: ["Angular", "ASP.NET Core", "SQL Server", "Socket.io", "TypeScript"],
 },
   {
     id: "2",
-    Img: "/tour.png",
-    Title: "Tour Guider",
+    Img: "/ahadu.png",
+    Title: "Ahadu Center — Multi-Service Platform",
     Description:
-      "This website, Visit Ethiopia, serves as an online travel guide and booking platform dedicated to exploring the diverse culture, ancient history, and natural wonders of Ethiopia, the 'land of origin.'It functions as a Travel Tour Company and Concierge, offering visitors curated travel experiences and detailed packages to various destinations across the country. A featured example is the comprehensive 10-day GondarTana package,which bundles five sub-packages for a cost of $990, providing details for interested travelers. Ultimately, the site aims to be a trusted resource, allowing users to browse available trips, view a gallery of sights, and book their personalized tour directly through the platform.",
-    Link: "https://visitethiopia12.netlify.app/",
-    TechStack: ["React", "Node.js", "MongoDB", "Express"],
+      "A multi-service cultural and commercial platform serving 50+ monthly users across movie catalog, library, and e-commerce modules. It includes JWT authentication, Redux Toolkit state management, and automated Jest, Vitest, and Supertest coverage reaching 90% across core modules.",
+    Link: "https://ahadu-center.vercel.app/",
+    Date: "Aug 2025 – Nov 2025",
+    TechStack: ["React", "Redux Toolkit", "Node.js", "Express", "MongoDB"],
   },
   {
     id: "3",
     Img: "/doctor.png",
-    Title: "Health care website",
+    Title: "ELIT ENT Center — Healthcare Provider",
     Description:
-      "The ELIT ENT Center website, serves as the official online presence for a specialized medical facility dedicated to comprehensive Ear, Nose, and Throat (ENT) care. Led by Dr. Abiy, the center focuses on providing expert diagnosis and personalized treatment for a wide range of conditions affecting the head and neck. This includes common issues like chronic sinusitis, tonsillitis, hearing loss, and sleep apnea, as well as more complex surgical needs. The site is likely designed to inform potential patients about the center’s philosophy, the full spectrum of services offered, clinic location, and procedures for scheduling appointments. It emphasizes professional, high-quality healthcare delivered by an experienced otolaryngologist, aiming to be a trusted resource for patients seeking specialized care for their ENT health concerns.",
+      "Built a healthcare provider website and appointment booking system handling 2,000+ requests. Collaborated directly with a physician to translate clinical requirements into product features and used Angular Material to improve usability and reduce key form-submission errors by 15%.",
     Link: "https://elit-ent-center.vercel.app/",
+    Date: "Jul 2026 – Sep 2026",
     TechStack: ["ASP.NET Core", "SQL Server", "Angular", "Entity Framework"],
   },
-  {
-    id: "5",
+   {
+    id: "4",
     Img: "/digital.png",
     Title: "Digital Hotel",
     Description:
-      "Digital-Hotel-Menu is a web-based application built with Next.js, TypeScript, Tailwind CSS, and Prisma. It replaces physical, printed hotel/restaurant menus with a digital solution, enabling customers to access an interactive QR food menu with features like dietary information and dynamic menu updates, alongside an admin management dashboard.",
-    Link: "https://bank-information-giver.netlify.app/",
-    TechStack: ["Next.js", "Node", "Express","mongoDb Atlas","TypeScript", "Docker"],
+      "**[Digital-Hotel-Menu](https://github.com/Abrham-Asrat/Digital-Hotel-Menu)** is a web-based application built with **Next.js**, **TypeScript**, **Tailwind CSS**, and **Prisma**. It replaces physical, printed hotel/restaurant menus with a digital solution, enabling customers to access an interactive QR food menu with features like dietary information and dynamic menu updates, alongside an admin management dashboard",
+    Link: "https://digital-hotel-menu-six.vercel.app/",
+    Date: "Jun 2026 – Sep 2026",
+    TechStack: ["Next js", "Type script", "Node js", "Docker","Express"]
   },
   {
-    id: "4",
-    Img: "./ahadu.png",
-    Title: "Ahadu Computer Center",
+    id: "5",
+    Img: "/tour.png",
+    Title: "Visit Ethiopia — Tourism Website",
     Description:
-      "AhaduCenter is a multi-domain platform for Ahadu Center, a cultural and commercial hub in Addis Ababa, Ethiopia. It combines a movie catalog, a book library, and an electronics catalog in one React and Node.js application. Members can discover content, borrow or reserve books, request movies, maintain wishlists, receive notifications, and place electronics pickup orders. Administrators manage catalog content, requests, and contact submissions.",
-    Link: "https://ahadu-center.vercel.app/",
-    TechStack: ["javaScript","React","Express", "Node.js", "MongoDB", "Redux", "MongoDb" , "Docker"],
+      "A travel guide and booking platform that showcases Ethiopia's culture, history, natural attractions, and curated tour packages. Visitors can explore destinations, browse travel galleries, and book personalized experiences, including the 10-day Gondar-Tana package.",
+    Link: "https://visitethiopia12.netlify.app/",
+    TechStack: ["React", "Node.js", "MongoDB", "Express"],
   },
 ];
 
 const sampleCertificates = [
   {
     Img: "/degree.jpg",
-    Title: "BSC.s in Software Engineering",
-    Issuer: "Arbaminch University",
-    Date: "Jun 25, 2026",
+    Title: "B.Sc. in Software Engineering",
+    Issuer: "Arba Minch University · CGPA 3.62 / 4.00",
+    Date: "Graduated Jun 2026",
     Link: "https://smis.amu.edu.et/pages/check_graduate/NSR-033-14",
   },
   {
     Img: "/microsoft.png",
     Title: "Foundational C# with Microsoft",
     Issuer: "freeCodeCamp",
-    Date: "April 5, 2026",
+    Date: "Apr 2026",
     Link: "https://www.freecodecamp.org/certification/fcc-75e640ae-7704-4b38-a228-d50d54e5afd7/foundational-c-sharp-with-microsoft",
   },
   {
     Img: "/IBM.png",
     Title: "AI Literacy",
-    Issuer: "IBM",
-    Date: "June 21, 2026",
+    Issuer: "IBM SkillsBuild",
+    Date: "Jun 2026",
     Link: "https://www.credly.com/badges/9a38ef5d-8f07-40c0-a2a0-8219d30c052e",
   },
 ];
@@ -243,17 +254,20 @@ export default function FullWidthTabs() {
         ...doc.data(),
       }));
 
-      setProjects(projectData.length > 0 ? projectData : sampleProjects);
+      const resolvedProjects = projectData.length > 0 ? projectData : sampleProjects;
+      setProjects(resolvedProjects);
       setCertificates(certificateData.length > 0 ? certificateData : sampleCertificates);
       setTechStacks(techData.length > 0 ? techData.map(t => ({ icon: t.icon, language: t.name })) : initialTechStacks);
 
-      if (projectData.length > 0) localStorage.setItem("projects", JSON.stringify(projectData));
+      localStorage.setItem("projects", JSON.stringify(resolvedProjects));
       if (certificateData.length > 0) localStorage.setItem("certificates", JSON.stringify(certificateData));
     } catch (error) {
       console.error("Error in fetchData:", error);
       setProjects(sampleProjects);
       setCertificates(sampleCertificates);
       setTechStacks(initialTechStacks);
+      localStorage.setItem("projects", JSON.stringify(sampleProjects));
+      localStorage.setItem("certificates", JSON.stringify(sampleCertificates));
     }
   }, []);
 
@@ -427,6 +441,7 @@ export default function FullWidthTabs() {
                     Title={project.Title}
                     Description={project.Description}
                     Link={project.Link}
+                    Date={project.Date}
                     id={project.id}
                   />
                 </div>

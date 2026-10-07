@@ -39,10 +39,10 @@ const WelcomeScreen = ({ onLoadingComplete }) => {
   }, [onLoadingComplete]);
 
   useEffect(() => {
-    // Fast initial transition instead of 4.8s delay
+    // Keep the welcome screen visible for two seconds before entering the portfolio.
     const timer = setTimeout(() => {
       handleFinish();
-    }, 1200);
+    }, 2200);
 
     // Rotate through welcome texts
     const textTimer = setInterval(() => {

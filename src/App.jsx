@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import React, { useState, lazy, Suspense } from "react";
+import { useState, lazy, Suspense } from "react";
+import PropTypes from "prop-types";
 import "./index.css";
 import Home from "./Pages/Home";
 import About from "./Pages/About";
@@ -57,6 +58,11 @@ const LandingPage = ({ showWelcome, handleWelcomeComplete }) => {
       )}
     </>
   );
+};
+
+LandingPage.propTypes = {
+  showWelcome: PropTypes.bool.isRequired,
+  handleWelcomeComplete: PropTypes.func.isRequired,
 };
 
 const ProjectPageLayout = () => (

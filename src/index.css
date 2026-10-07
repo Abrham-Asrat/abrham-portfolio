@@ -79,11 +79,6 @@ body {
   background: transparent;
 }
 
-/* Removed will-change property to prevent performance issues */
-[data-aos] {
-  /* will-change: transform, opacity !important; */
-}
-
 @keyframes shine {
   from {
     left: -100%;

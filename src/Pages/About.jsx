@@ -141,7 +141,7 @@ TimelineItem.propTypes = {
    ABOUT PAGE
 ═══════════════════════════════════════════════════ */
 const AboutPage = () => {
-  const [cvUrl, setCvUrl] = useState("/Abrham_Asrat_CV.pdf");
+  const [cvUrl, setCvUrl] = useState("/Abrham_Asrat__Resume_2026.pdf");
 
   const { totalProjects, totalCertificates, YearExperience } = useMemo(() => {
     const stored = JSON.parse(localStorage.getItem("projects") || "[]");
@@ -151,8 +151,8 @@ const AboutPage = () => {
     const exp = today.getFullYear() - start.getFullYear() -
       (today < new Date(today.getFullYear(), start.getMonth(), start.getDate()) ? 1 : 0);
     return {
-      totalProjects:      stored.length > 0 ? stored.length : 10,
-      totalCertificates:  certs.length  > 0 ? certs.length  : 0,
+      totalProjects:      stored.length > 0 ? stored.length : 3,
+      totalCertificates:  certs.length  > 0 ? certs.length  : 2,
       YearExperience:     exp,
     };
   }, []);
@@ -189,26 +189,26 @@ const AboutPage = () => {
 
   const timeline = [
     {
-      year: "2023 – Present",
-      title: "Full-Stack Developer",
-      org: "Freelance & Personal Projects",
-      desc: "Building scalable web apps with MEAN, MERN & ASP.NET stacks.",
+      year: "Feb 2025 – Jun 2025",
+      title: "Full-Stack Engineer Intern",
+      org: "CREAVERS Service PLC · Addis Ababa",
+      desc: "Built authentication and role-based dashboards for an E-health platform serving 3 user roles and 100+ patient records. Delivered 5+ clinical workflow features and reduced API response time by 30%.",
       icon: Briefcase,
       color: "#6366f1",
     },
     {
-      year: "2023",
-      title: "Started Software Engineering",
-      org: "Self-taught & Online Courses",
-      desc: "Deep-dived into React, Node.js, TypeScript and modern CSS.",
+      year: "Jun 2026",
+      title: "B.Sc. Software Engineering",
+      org: "Arba Minch University · CGPA 3.62 / 4.00",
+      desc: "Graduated with a B.Sc. in Software Engineering and a 67.50% National Exit Exam result.",
       icon: GraduationCap,
       color: "#a855f7",
     },
     {
-      year: "Ongoing",
-      title: "Open Source & Community",
-      org: "GitHub & Dev Community",
-      desc: "Contributing projects, building in public, and helping others.",
+      year: "2023 – Present",
+      title: "Full-Stack Development",
+      org: "Independent Projects & Remote Availability",
+      desc: "Building scalable products with Angular, React, ASP.NET Core, Node.js, SQL, MongoDB, Firebase, and modern DevOps tooling.",
       icon: Heart,
       color: "#06b6d4",
       last: true,
@@ -241,7 +241,7 @@ const AboutPage = () => {
             </span>
           </h2>
           <p className="mt-4 text-white/40 max-w-xl mx-auto text-sm sm:text-base">
-            A Full-Stack developer who loves turning complex problems into elegant, fast, and accessible digital experiences.
+            Full-Stack Web Developer with 2+ years of experience building scalable applications with Angular, React, ASP.NET Core, and Node.js. I build secure APIs, real-time systems, and optimized database-backed products.
           </p>
         </div>
 
@@ -260,21 +260,20 @@ const AboutPage = () => {
             </div>
 
             <p className="text-white/50 leading-relaxed text-sm sm:text-base">
-              Full-Stack Web Developer with expertise in building modern, scalable web applications
-              using <span className="text-indigo-400 font-medium">MEAN</span>,{" "}
-              <span className="text-purple-400 font-medium">MERN</span>, and{" "}
-              <span className="text-cyan-400 font-medium">ASP.NET</span> stacks. I specialize in
-              creating intuitive, accessible user experiences with a design-first approach. Experienced
-              in deploying via Netlify, Vercel, and custom VPS environments.
+              Full-Stack Web Developer with 2+ years of experience building modern, scalable web applications
+              using <span className="text-indigo-400 font-medium">Angular</span>,{" "}
+              <span className="text-purple-400 font-medium">React</span>,{" "}
+              <span className="text-cyan-400 font-medium">ASP.NET Core</span>, and Node.js. Experienced
+              in RESTful APIs, real-time systems, database optimization, Docker, and cloud deployment.
             </p>
 
             {/* key points */}
             <ul className="space-y-2">
               {[
-                "Clean, maintainable, well-documented code",
-                "Responsive & mobile-first design approach",
-                "Performance optimization & accessibility",
-                "CI/CD, Git workflows, and agile practices",
+                "Production systems handling 10,000+ requests",
+                "Reduced manual administrative work by 50%",
+                "Secure REST APIs and real-time systems",
+                "Open to remote roles with EU/US time zone overlap",
               ].map(pt => (
                 <li key={pt} className="flex items-start gap-2.5 text-sm text-white/60">
                   <CheckCircle2 className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" />

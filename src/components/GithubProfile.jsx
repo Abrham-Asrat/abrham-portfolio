@@ -1,11 +1,7 @@
-import React from "react";
 import {
   Github,
   Linkedin,
   Mail,
-  MapPin,
-  Clock,
-  UserCheck,
   Instagram,
 } from "lucide-react";
 
@@ -15,7 +11,7 @@ const GithubProfile = () => {
       {/* Header Section */}
       <div className="text-center mb-10">
         <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#6366f1] to-[#a855f7] bg-clip-text text-transparent mb-4">
-          Hi, I'm Abrham Asrat 👋
+          Hi, I&apos;m Abrham Asrat 👋
         </h1>
         <p className="text-xl text-gray-300 max-w-2xl mx-auto">
           Full-Stack Web Developer | Software Engineering Student | Open to
@@ -329,7 +325,7 @@ const GithubProfile = () => {
           <div className="w-8 h-8 rounded-full bg-[#6366f1] flex items-center justify-center">
             <span className="fas fa-link"></span>
           </div>
-          Let's Connect
+          Let&apos;s Connect
         </h2>
 
         <div className="flex flex-wrap gap-4 justify-center">

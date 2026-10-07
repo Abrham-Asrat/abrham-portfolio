@@ -12,11 +12,11 @@ const TYPING_SPEED = 90;
 const ERASING_SPEED = 45;
 const PAUSE_DURATION = 2200;
 const WORDS = ["Full-Stack Developer", "Software Engineer", "UI/UX Enthusiast"];
-const TECH_STACK = ["C#", "React", "Angular", "TypeScript", "Node.js", "ASP.NET", "Tailwind"];
+const TECH_STACK = ["C#", "React", "Angular", "TypeScript", "Node.js", "ASP.NET", "Express", "Docker"];
 
 const SOCIAL_LINKS = [
   { icon: Github, link: "https://github.com/abrham-asrat", label: "GitHub" },
-  { icon: Linkedin, link: "https://www.linkedin.com/in/abrham-asrat-8862b8366", label: "LinkedIn" },
+  { icon: Linkedin, link: "https://www.linkedin.com/in/abrham-asrat", label: "LinkedIn" },
   { icon: Mail, link: "mailto:abrhamasrat29@gmail.com", label: "Email" },
   { icon: Instagram, link: "https://www.instagram.com/abrham_asrat12", label: "Instagram" },
   {
@@ -144,6 +144,7 @@ const AvailabilityBadge = () => (
 
 /* ─── code window (hidden on small mobile, shown sm+) ── */
 const CodeWindow = memo(() => {
+  const [visibleCharacters, setVisibleCharacters] = useState(0);
   const lines = [
     { indent: 0, tokens: [{ t: "const ", c: "#a78bfa" }, { t: "developer", c: "#e2e8f0" }, { t: " = {", c: "#94a3b8" }] },
     { indent: 1, tokens: [{ t: "name: ", c: "#94a3b8" }, { t: '"Abrham Asrat"', c: "#86efac" }, { t: ",", c: "#94a3b8" }] },
@@ -154,6 +155,26 @@ const CodeWindow = memo(() => {
     { indent: 0, tokens: [] },
     { indent: 0, tokens: [{ t: "developer.", c: "#e2e8f0" }, { t: "build", c: "#60a5fa" }, { t: "(", c: "#94a3b8" }, { t: '"amazing"', c: "#86efac" }, { t: ");", c: "#94a3b8" }] },
   ];
+  const totalCharacters = lines.reduce(
+    (total, line) => total + line.tokens.reduce((lineTotal, token) => lineTotal + token.t.length, 0),
+    0
+  );
+
+  useEffect(() => {
+    const typingTimer = setInterval(() => {
+      setVisibleCharacters((current) => {
+        if (current >= totalCharacters) {
+          return 0;
+        }
+        return current + 1;
+      });
+    }, 45);
+
+    return () => clearInterval(typingTimer);
+  }, [totalCharacters]);
+
+  let charactersBeforeLine = 0;
+
   return (
     <div className="relative w-full max-w-sm sm:max-w-md mx-auto mt-6 sm:mt-0" data-aos="fade-up" data-aos-delay="400">
       <div className="absolute -inset-3 bg-gradient-to-br from-indigo-600/20 to-purple-600/20 rounded-3xl blur-2xl" />
@@ -171,7 +192,21 @@ const CodeWindow = memo(() => {
             <div key={li} className="flex" style={{ paddingLeft: `${line.indent * 14}px` }}>
               <span className="w-5 text-white/20 text-[10px] mr-2 sm:mr-3 select-none flex-shrink-0">{li + 1}</span>
               <span className="whitespace-nowrap">
-                {line.tokens.map((tok, ti) => <span key={ti} style={{ color: tok.c }}>{tok.t}</span>)}
+                {line.tokens.map((tok, ti) => {
+                  const tokenStart = charactersBeforeLine;
+                  const tokenEnd = tokenStart + tok.t.length;
+                  const visibleText = tok.t.slice(
+                    0,
+                    Math.max(0, Math.min(visibleCharacters - tokenStart, tok.t.length))
+                  );
+                  charactersBeforeLine = tokenEnd;
+
+                  return (
+                    <span key={ti} style={{ color: tok.c }}>
+                      {visibleText}
+                    </span>
+                  );
+                })}
               </span>
             </div>
           ))}
@@ -320,10 +355,11 @@ const Home = () => {
               {/* description */}
               <p className="text-white/50 text-sm sm:text-base leading-relaxed max-w-lg"
                 data-aos="fade-up" data-aos-delay="550">
-                Full-Stack Developer specializing in{" "}
-                <span className="text-indigo-400 font-medium">ASP.NET</span>,{" "}
-                <span className="text-purple-400 font-medium">MERN</span>, and{" "}
-                <span className="text-cyan-400 font-medium">MEAN</span> stacks — design-first & accessible.
+                Full-Stack Web Developer building scalable applications with{" "}
+                <span className="text-indigo-400 font-medium">Angular</span>,{" "}
+                <span className="text-purple-400 font-medium">React</span>,{" "}
+                <span className="text-cyan-400 font-medium">ASP.NET Core</span>, and Node.js.
+                Open to remote roles with EU/US time zone overlap.
               </p>
 
               {/* tech badges */}
@@ -347,7 +383,7 @@ const Home = () => {
                 data-aos="fade-up" data-aos-delay="850">
                 <CTABtn href="#Portofolio" label="View Projects" icon={ArrowRight} primary />
                 <CTABtn href="#Contact" label="Contact Me" icon={Mail} />
-                <CTABtn href="/Abrham_Asrat_FullStack_Developer_Resume.pdf" label="Download CV" icon={Download} download />
+                <CTABtn href="/Abrham_Asrat_Resume_2026.pdf" label="Download CV" icon={Download} download />
               </div>
 
               {/* social links */}
