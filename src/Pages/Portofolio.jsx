@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { db, collection } from "../firebase";
 import { getDocs } from "firebase/firestore";
 import PropTypes from "prop-types";
-import { useTheme } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -77,6 +76,11 @@ const ToggleButton = ({ onClick, isShowingMore }) => (
   </button>
 );
 
+ToggleButton.propTypes = {
+  onClick: PropTypes.func.isRequired,
+  isShowingMore: PropTypes.bool.isRequired,
+};
+
 function CustomTabPanel({ children, value, index, ...other }) {
   return (
     <div
@@ -100,13 +104,6 @@ CustomTabPanel.propTypes = {
   index: PropTypes.number.isRequired,
   value: PropTypes.number.isRequired,
 };
-
-function a11yProps(index) {
-  return {
-    id: `full-width-tab-${index}`,
-    "aria-controls": `full-width-tabpanel-${index}`,
-  };
-}
 
 const initialTechStacks = [
   { icon: "html.svg", language: "HTML" },
@@ -162,22 +159,22 @@ const sampleProjects = [
     TechStack: ["ASP.NET Core", "SQL Server", "Angular", "Entity Framework"],
   },
   {
-    id: "4",
+    id: "5",
     Img: "/bank.png",
-    Title: "Bank Information Giver",
+    Title: "Digital Hotel",
     Description:
-      "This website, Bank Information Giver, promotes a new, simplified, and entirely digital banking experience. It highlights core features, including a free debit card, tools to watch your money grow, and a 100% digital platform designed for a simpler life. The bank's operations focus on ease and speed, offering instant transfers, instant loans, and the ability to instantly close your account without complications. The site encourages visitors to open a free account today and features testimonials from satisfied customers who have embraced this modern, minimalist approach to finance.",
+      "Digital-Hotel-Menu is a web-based application built with Next.js, TypeScript, Tailwind CSS, and Prisma. It replaces physical, printed hotel/restaurant menus with a digital solution, enabling customers to access an interactive QR food menu with features like dietary information and dynamic menu updates, alongside an admin management dashboard.",
     Link: "https://bank-information-giver.netlify.app/",
-    TechStack: ["React", "Firebase", "Express"],
+    TechStack: ["Next.js", "Node", "Express","mongoDb Atlas","TypeScript", "Docker"],
   },
   {
-    id: "5",
-    Img: "/food.png",
-    Title: "Food Recipe",
+    id: "4",
+    Img: "./ahadu.png",
+    Title: "Ahadu Computer Center",
     Description:
-      "The website is a recipe application, likely a personal project or a learning exercise, titled Food recipe. It features a search function that encourages users to begin by looking up a recipe or ingredient to find cooking instructions and have fun. The platform includes core functionality for users to save their favorite recipes by using a 'Bookmarks' feature, which currently shows a message to find a nice recipe and bookmark it. Additionally, the site allows users to contribute their own culinary creations by providing a form to upload a new recipe, which includes fields for the title, ingredients, image URL, publisher, prep time, and servings.",
-    Link: "https://myforkifyrecipes.netlify.app/",
-    TechStack: ["React Native", "Node.js", "MongoDB", "Redux"],
+      "AhaduCenter is a multi-domain platform for Ahadu Center, a cultural and commercial hub in Addis Ababa, Ethiopia. It combines a movie catalog, a book library, and an electronics catalog in one React and Node.js application. Members can discover content, borrow or reserve books, request movies, maintain wishlists, receive notifications, and place electronics pickup orders. Administrators manage catalog content, requests, and contact submissions.",
+    Link: "https://ahadu-center.vercel.app/",
+    TechStack: ["javaScript","React","Express", "Node.js", "MongoDB", "Redux", "MongoDb" , "Docker"],
   },
 ];
 
@@ -206,7 +203,6 @@ const sampleCertificates = [
 ];
 
 export default function FullWidthTabs() {
-  const theme = useTheme();
   const [value, setValue] = useState(0);
   const [projects, setProjects] = useState([]);
   const [certificates, setCertificates] = useState([]);

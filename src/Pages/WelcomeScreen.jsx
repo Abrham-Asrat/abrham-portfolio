@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Code, User, Github, Zap } from "lucide-react";
+import { User, Github, Zap } from "lucide-react";
+import PropTypes from "prop-types";
+
+const WELCOME_TEXTS = ["Innovator", "Developer", "Creator", "Problem Solver"];
 
 const ParticleBackground = () => (
   <div className="absolute inset-0 overflow-hidden">
@@ -30,12 +33,10 @@ const WelcomeScreen = ({ onLoadingComplete }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentText, setCurrentText] = useState(0);
 
-  const welcomeTexts = ["Innovator", "Developer", "Creator", "Problem Solver"];
-
-  const handleFinish = () => {
+  const handleFinish = useCallback(() => {
     setIsLoading(false);
     onLoadingComplete?.();
-  };
+  }, [onLoadingComplete]);
 
   useEffect(() => {
     // Fast initial transition instead of 4.8s delay
@@ -45,14 +46,15 @@ const WelcomeScreen = ({ onLoadingComplete }) => {
 
     // Rotate through welcome texts
     const textTimer = setInterval(() => {
-      setCurrentText((prev) => (prev + 1) % welcomeTexts.length);
+      setCurrentText((prev) => (prev + 1) % WELCOME_TEXTS.length);
     }, 400);
 
     return () => {
       clearTimeout(timer);
       clearInterval(textTimer);
     };
-  }, []);
+
+  }, [handleFinish]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -114,7 +116,7 @@ const WelcomeScreen = ({ onLoadingComplete }) => {
               className="text-4xl md:text-6xl font-bold mb-6"
               variants={itemVariants}
             >
-              <span className="block text-white mb-2">Hello, I'm</span>
+              <span className="block text-white mb-2">Hello, I&apos;m</span>
               <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">
                 Abrham Asrat
               </span>
@@ -134,7 +136,7 @@ const WelcomeScreen = ({ onLoadingComplete }) => {
                   transition={{ duration: 0.3 }}
                   className="inline-block"
                 >
-                  {welcomeTexts[currentText]}
+                  {WELCOME_TEXTS[currentText]}
                 </motion.span>
               </div>
             </motion.div>
@@ -215,6 +217,10 @@ const WelcomeScreen = ({ onLoadingComplete }) => {
       )}
     </AnimatePresence>
   );
+};
+
+WelcomeScreen.propTypes = {
+  onLoadingComplete: PropTypes.func,
 };
 
 export default WelcomeScreen;

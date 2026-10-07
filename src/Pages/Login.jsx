@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth, signInWithEmailAndPassword, sendPasswordResetEmail } from "../firebase-auth";
 import { onAuthStateChanged } from "firebase/auth";
@@ -176,7 +176,7 @@ const LoginPage = () => {
 
             {/* contact */}
             <div className="mt-6 pt-6 border-t border-white/[0.06] text-center">
-              <p className="text-white/30 text-xs mb-2">Don't have an account?</p>
+              <p className="text-white/30 text-xs mb-2">Don&apos;t have an account?</p>
               <button
                 onClick={handleContact}
                 className="text-sm font-semibold text-purple-400 hover:text-purple-300 transition-colors underline underline-offset-4 decoration-purple-400/40"
@@ -205,7 +205,7 @@ const LoginPage = () => {
               </div>
               <h2 className="text-xl font-black text-white">Reset Password</h2>
               <p className="text-white/40 text-sm mt-1">
-                Enter your email and we'll send you a reset link.
+                Enter your email and we&apos;ll send you a reset link.
               </p>
             </div>
 

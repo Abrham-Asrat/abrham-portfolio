@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth, signOut, updateEmail, updatePassword, db } from "../firebase-auth";
 import {
@@ -6,10 +6,12 @@ import {
   reauthenticateWithCredential,
   onAuthStateChanged,
 } from "firebase/auth";
+
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
+import PropTypes from "prop-types";
 import {
   Eye, EyeOff, LogOut, User, Lock, Mail,
-  MessageSquare, Trash2, Settings, Bell, Shield,
+  MessageSquare, Trash2, Settings, Shield,
   ChevronRight, Inbox,
 } from "lucide-react";
 
@@ -19,6 +21,11 @@ const GlassCard = ({ children, className = "", glow = "indigo" }) => {
     indigo: "hover:shadow-[0_0_40px_-8px_rgba(99,102,241,0.5)]",
     purple: "hover:shadow-[0_0_40px_-8px_rgba(168,85,247,0.5)]",
     red:    "hover:shadow-[0_0_40px_-8px_rgba(239,68,68,0.4)]",
+  };
+  GlassCard.propTypes = {
+    children: PropTypes.node.isRequired,
+    className: PropTypes.string,
+    glow: PropTypes.oneOf(["indigo", "purple", "red"]),
   };
   return (
     <div
@@ -55,6 +62,10 @@ const GlassInput = ({ icon: Icon, accentColor = "#6366f1", ...props }) => (
     />
   </div>
 );
+GlassInput.propTypes = {
+  icon: PropTypes.elementType,
+  accentColor: PropTypes.string,
+};
 
 const Badge = ({ count, color = "#6366f1" }) => (
   <span
@@ -64,6 +75,10 @@ const Badge = ({ count, color = "#6366f1" }) => (
     {count}
   </span>
 );
+Badge.propTypes = {
+  count: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  color: PropTypes.string,
+};
 
 const Spinner = ({ color = "#6366f1" }) => (
   <div className="flex flex-col items-center justify-center py-16 gap-3">
@@ -74,6 +89,9 @@ const Spinner = ({ color = "#6366f1" }) => (
     <p className="text-white/40 text-sm">Loading…</p>
   </div>
 );
+Spinner.propTypes = {
+  color: PropTypes.string,
+};
 
 const EmptyState = ({ icon: Icon, text }) => (
   <div className="flex flex-col items-center justify-center py-16 gap-3 text-white/30">
@@ -81,6 +99,10 @@ const EmptyState = ({ icon: Icon, text }) => (
     <p className="text-sm italic">{text}</p>
   </div>
 );
+EmptyState.propTypes = {
+  icon: PropTypes.elementType.isRequired,
+  text: PropTypes.string.isRequired,
+};
 
 /* ─── main component ───────────────────────────────── */
 const AdminPage = () => {

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, memo } from "react";
+import PropTypes from "prop-types";
 import {
   Github, Linkedin, Mail, Instagram,
   Download, ArrowRight, Code2, Zap, Star,
@@ -39,6 +40,18 @@ const Particle = memo(({ style }) => (
     animationDelay: style.delay, opacity: style.opacity,
   }} />
 ));
+Particle.displayName = "Particle";
+Particle.propTypes = {
+  style: PropTypes.shape({
+    size: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    x: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    y: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    color: PropTypes.string.isRequired,
+    duration: PropTypes.number.isRequired,
+    delay: PropTypes.string.isRequired,
+    opacity: PropTypes.number.isRequired,
+  }).isRequired,
+};
 
 /* ─── blinking cursor ────────────────────────────────── */
 const Cursor = () => (
@@ -52,6 +65,8 @@ const TechBadge = memo(({ tech }) => (
     {tech}
   </span>
 ));
+TechBadge.displayName = "TechBadge";
+TechBadge.propTypes = { tech: PropTypes.string.isRequired };
 
 /* ─── stat item ──────────────────────────────────────── */
 const StatItem = memo(({ value, label, icon: Icon, color }) => (
@@ -65,6 +80,13 @@ const StatItem = memo(({ value, label, icon: Icon, color }) => (
     </div>
   </div>
 ));
+StatItem.displayName = "StatItem";
+StatItem.propTypes = {
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  label: PropTypes.string.isRequired,
+  icon: PropTypes.elementType.isRequired,
+  color: PropTypes.string.isRequired,
+};
 
 /* ─── social button ──────────────────────────────────── */
 const SocialBtn = memo(({ icon: Icon, link, label }) => (
@@ -76,6 +98,12 @@ const SocialBtn = memo(({ icon: Icon, link, label }) => (
     </div>
   </a>
 ));
+SocialBtn.displayName = "SocialBtn";
+SocialBtn.propTypes = {
+  icon: PropTypes.elementType.isRequired,
+  link: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+};
 
 /* ─── CTA button ─────────────────────────────────────── */
 const CTABtn = memo(({ href, label, icon: Icon, primary, download }) => (
@@ -93,6 +121,14 @@ const CTABtn = memo(({ href, label, icon: Icon, primary, download }) => (
     </button>
   </a>
 ));
+CTABtn.displayName = "CTABtn";
+CTABtn.propTypes = {
+  href: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  icon: PropTypes.elementType.isRequired,
+  primary: PropTypes.bool,
+  download: PropTypes.bool,
+};
 
 /* ─── availability badge ─────────────────────────────── */
 const AvailabilityBadge = () => (
@@ -158,6 +194,7 @@ const CodeWindow = memo(() => {
     </div>
   );
 });
+CodeWindow.displayName = "CodeWindow";
 
 /* ═══════════════════════════════════════════════════════
    MAIN COMPONENT
@@ -221,7 +258,7 @@ const Home = () => {
   useEffect(() => {
     const t = setTimeout(handleTyping, isTyping ? TYPING_SPEED : ERASING_SPEED);
     return () => clearTimeout(t);
-  }, [handleTyping]);
+  }, [handleTyping, isTyping]);
 
   return (
     <div className="min-h-screen bg-[#030014] overflow-x-hidden relative pt-16" id="Home">
@@ -261,7 +298,7 @@ const Home = () => {
 
               {/* name */}
               <div className="space-y-1 sm:space-y-2" data-aos="fade-up" data-aos-delay="300">
-                <p className="text-white/40 text-xs sm:text-sm font-medium tracking-[0.2em] uppercase">Hi, I'm</p>
+                <p className="text-white/40 text-xs sm:text-sm font-medium tracking-[0.2em] uppercase">Hi, I&apos;m</p>
                 <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[1.05]">
                   <span className="block" style={{ background: "linear-gradient(135deg,#ffffff 0%,#c7d2fe 50%,#e9d5ff 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
                     Abrham

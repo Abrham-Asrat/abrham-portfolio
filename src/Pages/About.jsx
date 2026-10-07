@@ -1,4 +1,4 @@
-import React, { useEffect, useState, memo, useMemo } from "react";
+import { useEffect, useState, memo, useMemo } from "react";
 import {
   FileText, Code, Award, Globe, ArrowUpRight,
   Linkedin, Mail, Github, Instagram, CheckCircle2,
@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import PropTypes from "prop-types";
 
 /* ─── glass stat card ──────────────────────────────── */
 const StatCard = memo(({ icon: Icon, value, label, description, color, animation, delay }) => (
@@ -38,6 +39,17 @@ const StatCard = memo(({ icon: Icon, value, label, description, color, animation
   </div>
 ));
 
+StatCard.displayName = "StatCard";
+StatCard.propTypes = {
+  icon: PropTypes.elementType.isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  label: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  color: PropTypes.string.isRequired,
+  animation: PropTypes.string.isRequired,
+  delay: PropTypes.number.isRequired,
+};
+
 /* ─── skill pill ───────────────────────────────────── */
 const SkillPill = memo(({ name, level, color }) => (
   <div className="space-y-1.5">
@@ -54,6 +66,13 @@ const SkillPill = memo(({ name, level, color }) => (
     </div>
   </div>
 ));
+
+SkillPill.displayName = "SkillPill";
+SkillPill.propTypes = {
+  name: PropTypes.string.isRequired,
+  level: PropTypes.number.isRequired,
+  color: PropTypes.string.isRequired,
+};
 
 /* ─── social link row ──────────────────────────────── */
 const SocialRow = memo(({ icon: Icon, label, href, color, username }) => (
@@ -77,6 +96,15 @@ const SocialRow = memo(({ icon: Icon, label, href, color, username }) => (
   </a>
 ));
 
+SocialRow.displayName = "SocialRow";
+SocialRow.propTypes = {
+  icon: PropTypes.elementType.isRequired,
+  label: PropTypes.string.isRequired,
+  href: PropTypes.string.isRequired,
+  color: PropTypes.string.isRequired,
+  username: PropTypes.string.isRequired,
+};
+
 /* ─── timeline item ────────────────────────────────── */
 const TimelineItem = memo(({ year, title, org, desc, icon: Icon, color, last }) => (
   <div className="flex gap-4">
@@ -97,6 +125,17 @@ const TimelineItem = memo(({ year, title, org, desc, icon: Icon, color, last }) 
     </div>
   </div>
 ));
+
+TimelineItem.displayName = "TimelineItem";
+TimelineItem.propTypes = {
+  year: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  org: PropTypes.string.isRequired,
+  desc: PropTypes.string.isRequired,
+  icon: PropTypes.elementType.isRequired,
+  color: PropTypes.string.isRequired,
+  last: PropTypes.bool,
+};
 
 /* ═══════════════════════════════════════════════════
    ABOUT PAGE
@@ -214,7 +253,7 @@ const AboutPage = () => {
             <div className="space-y-2">
               <h3 className="text-3xl sm:text-4xl font-black">
                 <span style={{ background: "linear-gradient(135deg,#6366f1,#a855f7)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-                  Hello, I'm
+                  Hello, I&apos;m
                 </span>
                 <span className="block text-white mt-1">Abrham Asrat</span>
               </h3>

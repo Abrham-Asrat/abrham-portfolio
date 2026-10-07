@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Share2, User, Mail, MessageSquare, Send } from "lucide-react";
-import { Link } from "react-router-dom";
 import SocialLinks from "../components/SocialLinks";
 import Komentar from "../components/Commentar";
 import Swal from "sweetalert2";
@@ -110,7 +109,7 @@ const ContactPage = () => {
           data-aos-duration="1100"
           className="text-slate-400 max-w-2xl mx-auto text-sm md:text-base mt-2"
         >
-          Got a question? Send me a message, and I'll get back to you soon.
+          Got a question? Send me a message, and I&apos;ll get back to you soon.
         </p>
       </div>
 
@@ -130,7 +129,7 @@ const ContactPage = () => {
                   Get in Touch
                 </h2>
                 <p className="text-gray-400">
-                  Have something to discuss? Send me a message and let's talk.
+                  Have something to discuss? Send me a message and let&apos;s talk.
                 </p>
               </div>
               <Share2 className="w-8 h-8 sm:w-10 sm:h-10 text-[#6366f1] opacity-50 flex-shrink-0 mt-2 sm:mt-0" />
