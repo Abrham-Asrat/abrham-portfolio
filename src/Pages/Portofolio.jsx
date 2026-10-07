@@ -160,7 +160,7 @@ const sampleProjects = [
   },
   {
     id: "5",
-    Img: "/bank.png",
+    Img: "/digital.png",
     Title: "Digital Hotel",
     Description:
       "Digital-Hotel-Menu is a web-based application built with Next.js, TypeScript, Tailwind CSS, and Prisma. It replaces physical, printed hotel/restaurant menus with a digital solution, enabling customers to access an interactive QR food menu with features like dietary information and dynamic menu updates, alongside an admin management dashboard.",
